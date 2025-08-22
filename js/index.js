@@ -107,8 +107,8 @@ document.getElementById("xboxForm").addEventListener("submit", function (e) {
     jogosSelecionados.push(el.value);
   });
 
-  if (jogosSelecionados.length > 5) {
-    alert("⚠️ Selecione no máximo 5 jogos!");
+  if (jogosSelecionados.length > 15) {
+    alert("⚠️ Selecione no máximo 15 jogos!");
     return;
   }
 
@@ -124,7 +124,7 @@ document.getElementById("xboxForm").addEventListener("submit", function (e) {
 📅 Ano: ${ano}
 💽 HD: ${hd}
 
-🎯 Jogos: ${jogosSelecionados.join(", ")}`;
+🎯 Jogos: \n ${jogosSelecionados.join(" \n ")}`;
 
   // ========== Envia para WhatsApp ==========
 
