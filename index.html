@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulário Da Hora Games</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>FFormulário Da Hora Games</h1>
+        <form id="xboxForm">
+            <div class="dados-input">
+                <label for="nome">Nome e Sobrenome:</label>
+                <input class="input-dados" type="text" id="nome" required>
+
+                <label for="telefone">Telefone:</label>
+                <input class="input-dados" type="tel" id="telefone" placeholder="(XX) 9XXXX-XXXX" maxlength="15"
+                    required>
+
+                <label for="email">Email:</label>
+                <input class="input-dados" type="email" id="email" required>
+
+                <label for="endereco">Endereço:</label>
+                <input class="input-dados" type="text" id="endereco" required>
+            </div>
+
+            <label for="modelo">Modelo do Xbox:</label>
+            <select class="input-dados" id="modelo" required>
+                <option value="Slim">Slim</option>
+                <option value="Fat">Fat</option>
+                <option value="Super Slim">Super Slim</option>
+            </select>
+
+            <label for="ano">Ano do console:</label>
+            <select class="input-dados" id="ano" required>
+                <option value="2007">2007</option>
+                <option value="2008">2008</option>
+                <option value="2009">2009</option>
+                <option value="2010">2010</option>
+                <option value="2011">2011</option>
+                <option value="2012">2012</option>
+                <option value="2013">2013</option>
+                <option value="2014">2014</option>
+            </select>
+
+            <label for="hd">Tem HD?</label>
+            <select class="input-dados" id="hd" required>
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+            </select>
+
+            <fieldset>
+                <legend>Escolha até 5 jogos:</legend>
+                <label><input type="checkbox" name="jogos" value="GTA V"> GTA V</label>
+                <label><input type="checkbox" name="jogos" value="Assassins Creeds"> Assassins Creeds</label>
+                <label><input type="checkbox" name="jogos" value="NFS Most Wanted"> NFS Most Wanted</label>
+                <label><input type="checkbox" name="jogos" value="Street Fight 4"> Street Fight 4</label>
+                <label><input type="checkbox" name="jogos" value="PES 2018"> PES 2018</label>
+                <label><input type="checkbox" name="jogos" value="Metal Slug X"> Metal Slug X</label>
+            </fieldset>
+
+            <button type="submit">Enviar para WhatsApp</button>
+        </form>
+    </div>
+    <script src="js/index.js"></script>
+</body>
+
+</html>

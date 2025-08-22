@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #222222;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 500px;
+    margin: 20px auto;
+    background: rgb(48, 48, 48);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+h1 {
+    text-align: center;
+    color: #107C10;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    
+}
+
+.input-dados{
+    width: 470px;
+    padding: 8px;
+    border: 2px solid #107C10;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+fieldset {
+    border: 2px solid #107C10;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+legend {
+    font-weight: bold;
+    color: #107C10;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #107C10;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0d5e0d;
+}
