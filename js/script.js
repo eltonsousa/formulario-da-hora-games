@@ -1,22 +1,70 @@
 /**
  * Lógica JavaScript para o aplicativo de configuração do Xbox 360.
  * Este script gerencia a interação do formulário, validações,
- * formatação de entrada e a integração com o WhatsApp.
+ * formatação de entrada e a integração com o WhatsApp, agora
+ * utilizando as funções de banco de dados do `supabase_db.js`
+ * para salvar os dados do formulário no Supabase.
  */
 
-document.addEventListener("DOMContentLoaded", function () {
+// Acessa as funções expostas globalmente pelo supabase_db.js
+const { initialize: initializeSupabase, saveXboxConfig } = window.supabaseDb;
+
+document.addEventListener("DOMContentLoaded", async function () {
   // Referências aos elementos do DOM
   const form = document.getElementById("xboxConfigForm");
   const telefoneInput = document.getElementById("telefone");
   const hdInternoRadio = document.getElementById("hdInterno");
   const hdExternoRadio = document.getElementById("hdExterno");
-  const pendriveRadio = document.getElementById("pendrive");
+  const pendriveRadio = document.getElementById("pendrive"); // Elemento para o pendrive
   const hdWarning = document.getElementById("hdWarning");
   const gameCheckboxes = document.querySelectorAll('input[name="jogos"]');
   const gameLimitWarning = document.getElementById("gameLimitWarning");
   const messageBox = document.getElementById("messageBox");
 
-  // --- Funções de Validação e Lógica de Interface ---
+  // --- Constantes ---
+  const MAX_GAMES_SELECTION = 15; // Limite de jogos que podem ser escolhidos
+  const WHATSAPP_NUMBER = "5592993312208"; // ALtere para o seu número de WhatsApp!
+
+  // --- Funções de Utilitário ---
+
+  /**
+   * Exibe uma mensagem de feedback para o usuário.
+   * @param {string} msg A mensagem a ser exibida.
+   * @param {'success'|'error'|'info'} type O tipo da mensagem (determina a cor).
+   */
+  function showMessage(msg, type) {
+    messageBox.textContent = msg;
+    messageBox.classList.remove(
+      "hidden",
+      "bg-red-200",
+      "text-red-800",
+      "bg-green-200",
+      "text-green-800",
+      "bg-blue-200",
+      "text-blue-800",
+      "font-bold",
+      "text-lg"
+    ); // Removendo estilos anteriores
+
+    if (type === "error") {
+      messageBox.classList.add("bg-red-200", "text-red-800");
+    } else if (type === "success") {
+      messageBox.classList.add(
+        "bg-green-200",
+        "text-green-800",
+        "font-bold",
+        "text-lg"
+      ); // Estilos para sucesso mais proeminente
+    } else if (type === "info") {
+      messageBox.classList.add("bg-blue-200", "text-blue-800");
+    }
+    messageBox.classList.remove("hidden");
+
+    // Esconde a mensagem após 5 segundos
+    setTimeout(() => {
+      messageBox.classList.add("hidden");
+    }, 5000);
+  }
 
   /**
    * Formata o número de telefone no padrão (XX) XXXXX-XXXX.
@@ -41,28 +89,26 @@ document.addEventListener("DOMContentLoaded", function () {
     return formattedValue;
   }
 
+  // --- Funções de Validação e Lógica de Interface ---
+
   /**
    * Valida o número de jogos selecionados.
-   * Permite no máximo 15 jogos.
+   * Permite no máximo MAX_GAMES_SELECTION jogos.
    */
   function validateGameSelection() {
-    let selectedGames = 0;
-    gameCheckboxes.forEach((checkbox) => {
-      if (checkbox.checked) {
-        selectedGames++;
-      }
-    });
+    let selectedGames = document.querySelectorAll(
+      'input[name="jogos"]:checked'
+    ).length;
 
-    if (selectedGames > 15) {
+    if (selectedGames > MAX_GAMES_SELECTION) {
       gameLimitWarning.classList.remove("hidden");
       // Desativa o último jogo selecionado se o limite for excedido
-      // Isso garante que o usuário não ultrapasse 15
-      gameCheckboxes.forEach((checkbox) => {
-        if (checkbox.checked && !checkbox.dataset.justChecked) {
-          checkbox.checked = false;
-        }
-        checkbox.dataset.justChecked = false; // Reset flag
-      });
+      const checkboxes = Array.from(
+        document.querySelectorAll('input[name="jogos"]:checked')
+      );
+      if (checkboxes.length > MAX_GAMES_SELECTION) {
+        checkboxes[checkboxes.length - 1].checked = false;
+      }
       return false;
     } else {
       gameLimitWarning.classList.add("hidden");
@@ -71,8 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
-   * Lógica para mostrar/esconder aviso de HD.
-   * Se nenhum HD for selecionado, mostra um aviso.
+   * Lógica para mostrar/esconder aviso de HD e habilitar/desabilitar seleção de jogos.
    */
   function handleHdSelection() {
     if (
@@ -93,37 +138,31 @@ document.addEventListener("DOMContentLoaded", function () {
         checkbox.disabled = false;
       });
     }
+    validateGameSelection(); // Revalida a seleção após mudanças de HD
   }
 
-  // --- Adição de Event Listeners ---
-
-  // Listener para formatar o telefone em tempo real
-  telefoneInput.addEventListener("input", function (event) {
-    event.target.value = formatTelefone(event.target.value);
-  });
-
-  // Listener para limitar a seleção de jogos
-  gameCheckboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", function () {
-      this.dataset.justChecked = this.checked; // Mark the last checked one
-      validateGameSelection();
-    });
-  });
-
-  // Listeners para a seleção de HD
-  hdInternoRadio.addEventListener("change", handleHdSelection);
-  hdExternoRadio.addEventListener("change", handleHdSelection);
-  pendriveRadio.addEventListener("change", handleHdSelection);
+  // --- Inicialização e Event Listeners ---
 
   // Inicializa a lógica de HD e jogos ao carregar a página
   handleHdSelection();
 
-  // --- Lógica de Envio do Formulário ---
+  // Adição de Event Listeners para o formulário e elementos da UI
+  telefoneInput.addEventListener("input", function (event) {
+    event.target.value = formatTelefone(event.target.value);
+  });
 
-  form.addEventListener("submit", function (event) {
+  gameCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", validateGameSelection);
+  });
+
+  hdInternoRadio.addEventListener("change", handleHdSelection);
+  hdExternoRadio.addEventListener("change", handleHdSelection);
+  pendriveRadio.addEventListener("change", handleHdSelection);
+
+  form.addEventListener("submit", async function (event) {
     event.preventDefault(); // Impede o envio padrão do formulário
 
-    // 1. Coleta dos dados do formulário
+    // 1. Coleta e validação dos dados do formulário
     const nome = document.getElementById("nome").value.trim();
     const telefone = telefoneInput.value.trim();
     const email = document.getElementById("email").value.trim();
@@ -133,11 +172,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let tipoHd = "";
     if (hdInternoRadio.checked) {
-      tipoHd = "HD Interno";
+      tipoHd = hdInternoRadio.value;
     } else if (hdExternoRadio.checked) {
-      tipoHd = "HD Externo";
-    } else if (pendrive.checked) {
-      tipoHd = "Pendrive de 16gb ou mais";
+      tipoHd = hdExternoRadio.value;
+    } else if (pendriveRadio.checked) {
+      tipoHd = pendriveRadio.value;
     }
 
     const jogosSelecionados = [];
@@ -147,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // 2. Validação básica (campos obrigatórios)
+    // Validações
     if (!nome || !telefone || !email || !endereco || !modeloXbox || !anoXbox) {
       showMessage("Por favor, preencha todos os campos obrigatórios.", "error");
       return;
@@ -155,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (
       !hdInternoRadio.checked &&
       !hdExternoRadio.checked &&
-      pendriveRadio.checked
+      !pendriveRadio.checked
     ) {
       showMessage("Por favor, selecione uma opção de HD.", "error");
       return;
@@ -173,77 +212,73 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
     if (!validateGameSelection()) {
-      showMessage("Você só pode escolher no máximo 15 jogos.", "error");
+      showMessage(
+        `Você só pode escolher no máximo ${MAX_GAMES_SELECTION} jogos.`,
+        "error"
+      );
       return;
     }
 
-    // 3. Montagem da mensagem para o WhatsApp
-    let message = `*Orçamento/Desbloqueio Xbox 360*\n\n`;
-    message += `*Informações Pessoais:*\n`;
-    message += `Nome: ${nome}\n`;
-    message += `Telefone: ${telefone}\n`;
-    message += `Email: ${email}\n`;
-    message += `Endereço: ${endereco}\n\n`;
+    try {
+      // 2. Salva a configuração no Supabase
+      const configToSave = {
+        nome,
+        telefone,
+        email,
+        endereco,
+        modeloXbox,
+        anoXbox: parseInt(anoXbox), // Garante que o ano seja um número
+        tipoHd,
+        jogosSelecionados, // Supabase aceita array de strings em coluna jsonb
+      };
 
-    message += `*Detalhes do Xbox:*\n`;
-    message += `Modelo: ${modeloXbox.toUpperCase()}\n`;
-    message += `Ano: ${anoXbox}\n`;
-    message += `Armazenamento: ${tipoHd}\n\n`;
+      const { data, error } = await saveXboxConfig(configToSave);
 
-    if (jogosSelecionados.length > 0) {
-      message += `*Jogos Escolhidos:*\n`;
-      jogosSelecionados.forEach((jogo) => {
-        message += `- ${jogo}\n`;
-      });
-    } else if (tipoHd) {
-      message += `Nenhum jogo selecionado para cópia.\n`;
-    } else {
-      message += `Não é possível copiar jogos sem HD.\n`;
+      if (error) {
+        console.error("Erro ao salvar no Supabase:", error);
+        showMessage(`Erro ao salvar no banco de dados: ${error}`, "error");
+        return;
+      }
+
+      // Acessa o ID de forma segura
+      // const savedId = (data && data.id) ? data.id : 'desconhecido';
+      // showMessage(`Dados enviados com sucesso! ID: ${savedId}`, 'success'); // Mensagem de sucesso removida
+
+      // 3. Montagem da mensagem para o WhatsApp
+      let message = `*Orçamento/Desbloqueio Xbox 360*\n\n`;
+      message += `*Informações Pessoais:*\n`;
+      message += `Nome: ${nome}\n`;
+      message += `Telefone: ${telefone}\n`;
+      message += `Email: ${email}\n`;
+      message += `Endereço: ${endereco}\n\n`;
+
+      message += `*Detalhes do Xbox:*\n`;
+      message += `Modelo: ${modeloXbox.toUpperCase()}\n`;
+      message += `Ano: ${anoXbox}\n`;
+      message += `Armazenamento: ${tipoHd}\n\n`;
+
+      if (jogosSelecionados.length > 0) {
+        message += `*Jogos Escolhidos:*\n`;
+        jogosSelecionados.forEach((jogo) => {
+          message += `- ${jogo}\n`;
+        });
+      } else if (tipoHd) {
+        message += `Nenhum jogo selecionado para cópia.\n`;
+      } else {
+        message += `Não é possível copiar jogos sem HD.\n`;
+      }
+      message += `\n_Gerado via App Da Hora Games_`;
+
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(
+        message
+      )}`;
+
+      window.open(whatsappUrl, "_system");
+      form.reset(); // Limpa o formulário após o envio
+      handleHdSelection(); // Reaplicar a lógica de HD/jogos
+    } catch (e) {
+      console.error("Erro inesperado ao processar formulário: ", e);
+      showMessage(`Erro inesperado: ${e.message}`, "error");
     }
-    message += `\n_Gerado via App Da Hora Games_`;
-
-    // 4. Criação do link do WhatsApp
-    // Substitua '5592999999999' pelo número de telefone do WhatsApp de destino, incluindo o código do país e DDD.
-    // Exemplo: 55 para Brasil, 92 para DDD de Manaus, e o número.
-    const whatsappNumber = "5592993312208"; // ALtere para o seu número de WhatsApp!
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(
-      message
-    )}`;
-
-    // 5. Redirecionamento para o WhatsApp
-    window.open(whatsappUrl, "_system"); // '_system' para abrir em um navegador externo ou app
-
-    showMessage("Redirecionando para o WhatsApp...", "success");
-    // Opcional: Limpar formulário após o envio
-    // form.reset();
-    // handleHdSelection(); // Reaplicar a lógica de HD/jogos
   });
-
-  /**
-   * Exibe uma mensagem de feedback para o usuário.
-   * @param {string} msg A mensagem a ser exibida.
-   * @param {'success'|'error'} type O tipo da mensagem (determina a cor).
-   */
-  function showMessage(msg, type) {
-    messageBox.textContent = msg;
-    messageBox.classList.remove(
-      "hidden",
-      "bg-red-200",
-      "text-red-800",
-      "bg-green-200",
-      "text-green-800"
-    );
-
-    if (type === "error") {
-      messageBox.classList.add("bg-red-200", "text-red-800");
-    } else if (type === "success") {
-      messageBox.classList.add("bg-green-200", "text-green-800");
-    }
-    messageBox.classList.remove("hidden");
-
-    // Esconde a mensagem após 5 segundos
-    setTimeout(() => {
-      messageBox.classList.add("hidden");
-    }, 5000);
-  }
 });

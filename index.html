@@ -7,7 +7,7 @@
     <title>Configurações Xbox 360</title>
     <!-- Link para o arquivo CSS de estilos -->
     <link rel="stylesheet" href="css/style.css">
-        <!-- Importa a fonte do Google Fonts para um estilo retrô e legível -->
+    <!-- Importa as fontes do Google Fonts para um estilo retrô e legível -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
 </head>
@@ -81,19 +81,19 @@
             <h2 class="text-2xl font-semibold text-green-400 mb-4">Opções de Armazenamento (HD)</h2>
             <div class="mb-6">
                 <div class="flex items-center mb-2">
-                    <input type="radio" id="hdInterno" name="tipoHd" value="interno"
+                    <input type="radio" id="hdInterno" name="tipoHd" value="HD Interno"
                         class="mr-2 form-radio text-green-500">
                     <label for="hdInterno" class="text-gray-300">HD Interno</label>
                 </div>
                 <div class="flex items-center mb-2">
-                    <input type="radio" id="hdExterno" name="tipoHd" value="externo"
+                    <input type="radio" id="hdExterno" name="tipoHd" value="HD Externo"
                         class="mr-2 form-radio text-green-500">
                     <label for="hdExterno" class="text-gray-300">HD Externo</label>
                 </div>
                 <div class="flex items-center mb-2">
-                    <input type="radio" id="pendrive" name="tipoHd" value="externo"
+                    <input type="radio" id="pendrive" name="tipoHd" value="Pendrive de 16GB ou mais"
                         class="mr-2 form-radio text-green-500">
-                    <label for="pendrive" class="text-gray-300">Pendrive de 16gb ou mais</label>
+                    <label for="pendrive" class="text-gray-300">Pendrive de 16GB ou mais</label>
                 </div>
                 <p id="hdWarning" class="text-red-400 text-sm mt-2 hidden">Atenção: Sem HD, não será possível copiar
                     jogos!</p>
@@ -101,7 +101,9 @@
 
             <!-- Seleção de Jogos -->
             <details id="gameSelectionDetails" class="mb-6">
-                <summary class="text-2xl font-semibold text-green-400 mb-4">Click aqui e escolha seus Jogos (Máx. 15!)</summary>
+                <summary class="text-2xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out">
+                    Click aqui e escolha seus Jogos (Máx. 15!)
+                </summary>
                 <div id="gameSelection" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex items-center">
                         <input type="checkbox" id="assassinsCreedII" name="jogos" value="Assassins Creeds II"
@@ -246,11 +248,14 @@
 
             <!-- Mensagens de Feedback/Erro -->
             <div id="messageBox" class="mt-4 p-3 rounded-lg text-center hidden"></div>
+
         </form>
     </div>
 
-    <!-- Link para o arquivo JavaScript de lógica -->
-    <script src="js/script.js"></script>
+    <!-- Importa o módulo de banco de dados do Supabase -->
+    <script type="module" src="js/supabase_db.js"></script>
+    <!-- Link para o arquivo JavaScript de lógica da UI -->
+    <script src="js/script.js" type="module"></script>
     <!-- Inclui Tailwind CSS para estilos -->
     <script src="https://cdn.tailwindcss.com"></script>
 </body>

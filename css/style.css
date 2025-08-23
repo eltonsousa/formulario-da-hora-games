@@ -5,8 +5,7 @@
 
 /* Estilos gerais do corpo */
 body {
-    /*font-family: 'Inter', sans-serif;*/ /* Define a fonte principal */
-    font-family: 'Press Start 2P';
+    font-family: 'Press Start 2P', cursive; /* Define a fonte principal para a maioria do texto */
     background-color: #1a202c; /* Cor de fundo escura, inspirada no Xbox */
     color: #e2e8f0; /* Cor do texto padrão (cinza claro) */
     line-height: 1.6;
@@ -31,14 +30,14 @@ header {
 }
 
 header h1 {
-    font-family: 'Press Start 2P';
+    font-family: 'Press Start 2P', cursive; /* Mantém a fonte pixelada para o título principal */
     font-size: 1.5rem; /* Tamanho da fonte para o título principal */
     color: #10B981; /* Verde esmeralda para destaque */
     margin-bottom: 0.5rem;
 }
 
 header p {
-    font-family: 'Pixelify Sans';
+    font-family: 'Pixelify Sans', sans-serif; /* Usa Pixelify Sans para o subtítulo */
     font-size: 1rem;
     color: #a0aec0; /* Cinza mais claro para subtítulos */
 }
@@ -64,15 +63,14 @@ label {
     display: block;
     color: #cbd5e0; /* Cinza claro para labels */
     font-weight: bold;
-    /*margin-bottom: 0.5rem;*/
     font-size: 0.9rem;
+    margin-bottom: 0.5rem; /* Adicionado um margin-bottom para consistência */
 }
 
 /* Estilos para inputs de texto, email, telefone e endereço */
 input[type="text"],
 input[type="tel"],
-input[type="email"],
-select {
+input[type="email"] { /* Removido 'select' daqui para aplicar estilo específico abaixo */
     width: 100%;
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
@@ -83,15 +81,35 @@ select {
     transition: all 0.3s ease-in-out;
 }
 
+select { /* Estilo específico para select */
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #4a5568; /* Borda cinza escuro */
+    border-radius: 0.5rem; /* Cantos arredondados */
+    background-color: #4a5568; /* Fundo do select um pouco mais claro */
+    color: #e2e8f0; /* Cor do texto do select */
+    transition: all 0.3s ease-in-out;
+}
+
+
 input[type="text"]:focus,
 input[type="tel"]:focus,
-input[type="email"]:focus,
-select:focus {
+input[type="email"]:focus { /* Removido select:focus daqui */
     outline: none;
     border-color: #10B981; /* Borda verde ao focar */
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); /* Sombra verde ao focar */
     background-color: #2d3748; /* Fundo mais escuro ao focar */
 }
+
+/* Estilo específico para select quando em foco, para ser mais claro */
+select:focus {
+    outline: none;
+    border-color: #10B981; /* Borda verde ao focar */
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); /* Sombra verde ao focar */
+    background-color: #6b849e; /* Fundo mais claro ao focar */
+}
+
 
 /* Estilos para radio buttons e checkboxes */
 input[type="radio"],
@@ -105,7 +123,7 @@ input[type="checkbox"] {
     cursor: pointer;
     position: relative;
     top: 3px; /* Alinhamento visual */
-        margin-bottom: 0.4rem;
+    margin-bottom: 0.4rem;
 }
 
 input[type="radio"] {
@@ -162,6 +180,28 @@ button[type="submit"]:hover {
     background-color: #059669; /* Verde mais escuro ao passar o mouse */
     transform: translateY(-2px); /* Efeito de elevação */
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para o summary da lista de jogos */
+details summary {
+    list-style: none; /* Remove a seta padrão do summary */
+    display: flex; /* Para centralizar o ícone de seta customizado */
+    align-items: center;
+}
+
+details summary::-webkit-details-marker {
+    display: none; /* Remove o marcador padrão em Webkit */
+}
+
+details summary::before {
+    content: '▶'; /* Ícone de seta para recolhido */
+    margin-right: 0.5rem;
+    transition: transform 0.2s ease-in-out;
+    color: #34D399; /* Cor do ícone */
+}
+
+details[open] summary::before {
+    content: '▼'; /* Ícone de seta para expandido */
 }
 
 /* Mensagens de aviso/erro */
