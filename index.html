@@ -60,14 +60,15 @@
                 <div id="error-modeloXbox" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
             <div class="mb-6">
-                <label for="anoXbox" class="block text-gray-300 text-sm font-bold mb-2">Ano do Xbox:</label>
+                <label for="anoXbox" class="block text-gray-300 text-sm font-bold mb-2">Ano do Xbox: <span class="text-gray-400 text-xs cursor-help ml-1" title="Verificar a etiqueta atrás do aparelho.">&#x2139;</span></label>
                 <select id="anoXbox" name="anoXbox" required
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
                     <option value="">Selecione o ano</option>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
                             const anoXboxSelect = document.getElementById('anoXbox');
-                            for (let year = 2007; year <= 2014; year++) {
+                            // Loop para adicionar anos de 2007 a 2015 (agora incluindo 2015)
+                            for (let year = 2007; year <= 2015; year++) {
                                 const option = document.createElement('option');
                                 option.value = year;
                                 option.textContent = year;
@@ -241,20 +242,17 @@
                 </div>
             </details>
 
-            <!-- Botão de Ver Localização da Loja -->
             <button type="button" id="viewStoreLocationBtn"
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 mb-4">
                 Ver Localização da Loja
             </button>
 
 
-            <!-- Botão de Enviar -->
             <button type="submit" id="enviarWhatsapp"
                 class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105">
                 Enviar para WhatsApp
             </button>
 
-            <!-- Mensagens de Feedback/Erro -->
             <div id="messageBox" class="mt-4 p-3 rounded-lg text-center hidden"></div>
 
         </form>

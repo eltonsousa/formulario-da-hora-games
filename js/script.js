@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     maxGamesSelection: 15,
     whatsappNumber: "5592993312208", // ALtere para o seu número de WhatsApp!
     storeLocation: {
-      latitude: -3.029132597030824, // SUBSTITUA PELA LATITUDE REAL DA SUA LOJA.
-      longitude: -60.006103378990616, // SUBSTITUA PELA LONGITUDE REAL DA SUA LOJA.
+      latitude: -3.029107355187607, // SUBSTITUA PELA LATITUDE REAL DA SUA LOJA.
+      longitude: -60.00610662152138, // SUBSTITUA PELA LONGITUDE REAL DA SUA LOJA.
     },
   };
 
@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     OPENING_MAP_TEXT: "Abrindo Mapa...",
     UNSAVED_CHANGES_WARNING:
       "Você tem alterações não salvas. Tem certeza que deseja sair?",
+    XBOX_2015_WARNING: "Não será possível fazer desbloqueio definitivo!", // Nova mensagem
   };
 
   const CSS_CLASSES = {
@@ -114,11 +115,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (message) {
       errorElement.textContent = message;
       errorElement.classList.remove(CSS_CLASSES.HIDDEN);
-      inputElement.classList.add(CSS_CLASSES.BORDER_RED);
+      // Para radio buttons, a borda vermelha deve ser aplicada a um wrapper ou não ser aplicada ao input
+      if (inputElement.type !== "radio") {
+        inputElement.classList.add(CSS_CLASSES.BORDER_RED);
+      }
     } else {
       errorElement.textContent = "";
       errorElement.classList.add(CSS_CLASSES.HIDDEN);
-      inputElement.classList.remove(CSS_CLASSES.BORDER_RED);
+      if (inputElement.type !== "radio") {
+        inputElement.classList.remove(CSS_CLASSES.BORDER_RED);
+      }
     }
   }
 
@@ -241,23 +247,38 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   function validateAnoXbox() {
     const input = document.getElementById("anoXbox");
-    if (!input.value) {
+    const selectedYear = input.value;
+    let isValid = true;
+
+    if (!selectedYear) {
       showInlineError(errorAnoXbox, input, MESSAGES.REQUIRED_FIELD);
-      return false;
+      isValid = false;
+    } else if (selectedYear === "2015") {
+      // Check for the specific year 2015
+      showInlineError(errorAnoXbox, input, MESSAGES.XBOX_2015_WARNING);
+      // This is a warning, not a hard error that prevents form submission, so we still return true
+      // but we make sure the error is displayed.
+    } else {
+      showInlineError(errorAnoXbox, input, "");
     }
-    showInlineError(errorAnoXbox, input, "");
-    return true;
+    return isValid; // Returns true even for 2015, as it's a warning. Returns false if empty.
   }
 
   function validateTipoHd() {
     const anyHdSelected =
       hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
-    const radioGroup = document.querySelector('input[name="tipoHd"]'); // Refere-se ao grupo para aplicar o erro
+    const radioGroupWrapper = document
+      .querySelector('input[name="tipoHd"]')
+      .closest("div.mb-6"); // Elemento pai que contém os rádios para borda
     if (!anyHdSelected) {
-      showInlineError(errorTipoHd, radioGroup, MESSAGES.SELECT_HD_OPTION);
+      showInlineError(
+        errorTipoHd,
+        radioGroupWrapper,
+        MESSAGES.SELECT_HD_OPTION
+      );
       return false;
     }
-    showInlineError(errorTipoHd, radioGroup, "");
+    showInlineError(errorTipoHd, radioGroupWrapper, "");
     return true;
   }
 
@@ -277,12 +298,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   function validateForm() {
     let isValid = true;
 
+    // Ensure all validations run, and `isValid` tracks if any returned false (for hard errors)
     isValid = validateNome() && isValid;
     isValid = validateTelefone() && isValid;
     isValid = validateEmail() && isValid;
     isValid = validateEndereco() && isValid;
     isValid = validateModeloXbox() && isValid;
-    isValid = validateAnoXbox() && isValid;
+    isValid = validateAnoXbox() && isValid; // validateAnoXbox might display a warning but still return true
     isValid = validateTipoHd() && isValid;
 
     if (!validateGameSelection()) {
@@ -330,7 +352,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     validateGameSelection();
     updateGameCountDisplay();
-    validateTipoHd(); // Garante que o erro de HD seja limpo se uma opção for selecionada
+    validateTipoHd();
   }
 
   viewStoreLocationBtn.addEventListener("click", () => {
@@ -366,6 +388,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("anoXbox")
     .addEventListener("change", validateAnoXbox);
+  document.getElementById("anoXbox").addEventListener("blur", validateAnoXbox); // Also validate on blur
 
   hdInternoRadio.addEventListener("change", () => {
     handleHdSelection();
@@ -399,6 +422,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     messageBox.classList.add(CSS_CLASSES.HIDDEN);
 
+    // Limpa erros inline antes de revalidar
     showInlineError(errorNome, document.getElementById("nome"), "");
     showInlineError(errorTelefone, telefoneInput, "");
     showInlineError(errorEmail, emailInput, "");
@@ -407,9 +431,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     showInlineError(errorAnoXbox, document.getElementById("anoXbox"), "");
     showInlineError(
       errorTipoHd,
-      document.querySelector('input[name="tipoHd"]'),
+      document.querySelector('input[name="tipoHd"]').closest("div.mb-6"),
       ""
-    ); // Limpa o erro do grupo de rádios
+    );
 
     if (!validateForm()) {
       setFormLoadingState(false);
@@ -457,8 +481,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (error) {
         console.error("Erro ao salvar no Supabase:", error);
-        // Tratamento de Erros Supabase Mais Detalhado:
-        // Exibe a mensagem de erro específica do Supabase.
         showGlobalMessage(
           MESSAGES.DB_SAVE_ERROR(
             error.message || "Verifique sua conexão e tente novamente."
@@ -491,6 +513,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       } else {
         whatsappMessage += `Não é possível copiar jogos sem HD.\n`;
       }
+
+      if (anoXbox === "2015") {
+        whatsappMessage += `\n*Aviso:* ${MESSAGES.XBOX_2015_WARNING}\n`;
+      }
+
       whatsappMessage += `\n_Gerado via App Da Hora Games_`;
 
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${
