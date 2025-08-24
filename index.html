@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
-    <!-- Font Awesome CDN para ícones -->
+    <!-- Font Awesome CDN para ícones (mantido para outros ícones se houver, ou pode ser removido se não for mais usado) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
@@ -23,7 +23,7 @@
         </header>
 
         <form id="xboxConfigForm" class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg">
-            <h2 class="text-2xl font-semibold text-green-400 mb-4">Informações Pessoais</h2>
+            <h3 class="text-2xl font-semibold text-green-400 mb-4">Informações Pessoais</h3>
             <div class="mb-4">
                 <label for="nome" class="block text-gray-300 text-sm font-bold mb-2">Nome e Sobrenome:</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required
@@ -49,7 +49,7 @@
                 <div id="error-endereco" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
 
-            <h2 class="text-2xl font-semibold text-green-400 mb-4">Detalhes do Xbox</h2>
+            <h3 class="text-2xl font-semibold text-green-400 mb-4">Detalhes do Xbox</h3>
             <div class="mb-4">
                 <label for="modeloXbox" class="block text-gray-300 text-sm font-bold mb-2">Modelo do Xbox 360:</label>
                 <select id="modeloXbox" name="modeloXbox" required
@@ -61,9 +61,15 @@
                 </select>
                 <div id="error-modeloXbox" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
-            <div class="mb-6">
-                <label for="anoXbox" class="block text-gray-300 text-sm font-bold mb-2">Ano do Xbox: <i id="anoXboxHelpIcon" class="fas fa-info-circle text-gray-400 text-lg cursor-help ml-1"></i></label>
-                <div id="yearHelpMessage" class="bg-gray-700 text-gray-200 text-sm p-2 rounded-md mt-1 hidden">
+            <div class="mb-6 relative">
+                <div class="flex items-center mb-2">
+                    <label for="anoXbox" class="block text-gray-300 text-sm font-bold mr-2 anoXbox">Ano do Xbox:</label>
+                    <button type="button" id="ondeEncontrarBtn"
+                        class="onde-encontrar bg-gray-600 hover:bg-gray-700 text-gray-200 text-xs font-bold py-1 px-2 rounded-md transition duration-300 ease-in-out">
+                        Onde Encontrar?
+                    </button>
+                </div>
+                <div id="yearHelpMessage" class="bg-gray-700 text-gray-200 text-sm p-2 rounded-md mt-1 hidden w-max max-w-xs sm:max-w-md shadow-lg text-center">
                     Verificar a etiqueta atrás do aparelho.
                 </div>
                 <select id="anoXbox" name="anoXbox" required
@@ -84,7 +90,7 @@
                 <div id="error-anoXbox" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
 
-            <h2 class="text-2xl font-semibold text-green-400 mb-4">Opções de Armazenamento (HD)</h2>
+            <h3 class="text-1xl font-semibold text-green-400 mb-4">Opções de Armazenamento (HD, SSD, Pendrive)</h3>
             <div class="mb-6">
                 <div class="flex items-center mb-2">
                     <input type="radio" id="hdInterno" name="tipoHd" value="HD Interno"
@@ -107,7 +113,7 @@
             </div>
 
             <details id="gameSelectionDetails" class="mb-6">
-                <summary class="text-2xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out">
+                <summary class="text-1xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out">
                     Click aqui e escolha seus Jogos (<span id="gameCountDisplay">0</span>/<span id="maxGameLimit">15</span>!)
                 </summary>
                 <div id="gameSelection" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">

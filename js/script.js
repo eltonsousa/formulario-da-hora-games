@@ -61,6 +61,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("xboxConfigForm");
   const enviarWhatsappBtn = document.getElementById("enviarWhatsapp");
   const viewStoreLocationBtn = document.getElementById("viewStoreLocationBtn");
+  const ondeEncontrarBtn = document.getElementById("ondeEncontrarBtn"); // Novo elemento
+  const yearHelpMessage = document.getElementById("yearHelpMessage"); // Elemento de mensagem de ajuda
   const telefoneInput = document.getElementById("telefone");
   const emailInput = document.getElementById("email");
   const hdInternoRadio = document.getElementById("hdInterno");
@@ -72,13 +74,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   const messageBox = document.getElementById("messageBox");
   const gameCountDisplay = document.getElementById("gameCountDisplay");
   const maxGameLimit = document.getElementById("maxGameLimit");
-  const anoXboxHelpIcon = document.getElementById("anoXboxHelpIcon"); // Novo elemento
-  const yearHelpMessage = document.getElementById("yearHelpMessage"); // Novo elemento
 
   const errorNome = document.getElementById("error-nome");
   const errorTelefone = document.getElementById("error-telefone");
   const errorEmail = document.getElementById("error-email");
-  const errorEndereco = document.getElementById("endereco");
+  const errorEndereco = document.getElementById("error-endereco");
   const errorModeloXbox = document.getElementById("error-modeloXbox");
   const errorAnoXbox = document.getElementById("error-anoXbox");
   const errorTipoHd = document.getElementById("error-tipoHd");
@@ -117,13 +117,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (message) {
       errorElement.textContent = message;
       errorElement.classList.remove(CSS_CLASSES.HIDDEN);
-      if (inputElement.type !== "radio") {
+      if (inputElement && inputElement.type !== "radio") {
         inputElement.classList.add(CSS_CLASSES.BORDER_RED);
       }
     } else {
       errorElement.textContent = "";
       errorElement.classList.add(CSS_CLASSES.HIDDEN);
-      if (inputElement.type !== "radio") {
+      if (inputElement && inputElement.type !== "radio") {
         inputElement.classList.remove(CSS_CLASSES.BORDER_RED);
       }
     }
@@ -269,14 +269,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       .querySelector('input[name="tipoHd"]')
       .closest("div.mb-6");
     if (!anyHdSelected) {
-      showInlineError(
-        errorTipoHd,
-        radioGroupWrapper,
-        MESSAGES.SELECT_HD_OPTION
-      );
+      showInlineError(errorTipoHd, null, MESSAGES.SELECT_HD_OPTION);
       return false;
     }
-    showInlineError(errorTipoHd, radioGroupWrapper, "");
+    showInlineError(errorTipoHd, null, "");
     return true;
   }
 
@@ -366,17 +362,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     }, 2000);
   });
 
-  // --- Lógica para o ícone de ajuda do Ano do Xbox ---
-  anoXboxHelpIcon.addEventListener("click", (event) => {
-    event.stopPropagation(); // Impede que o clique se propague para o documento
+  // --- Lógica para o botão "Onde Encontrar?" e a mensagem de ajuda ---
+  ondeEncontrarBtn.addEventListener("click", () => {
     yearHelpMessage.classList.toggle(CSS_CLASSES.HIDDEN);
   });
 
   // Fechar a mensagem de ajuda se clicar fora dela
   document.addEventListener("click", (event) => {
+    // Verifica se o clique não foi na mensagem de ajuda ou no gatilho do botão "Onde Encontrar?"
     if (
       !yearHelpMessage.classList.contains(CSS_CLASSES.HIDDEN) &&
-      !anoXboxHelpIcon.contains(event.target)
+      !yearHelpMessage.contains(event.target) &&
+      !ondeEncontrarBtn.contains(event.target)
     ) {
       yearHelpMessage.classList.add(CSS_CLASSES.HIDDEN);
     }
@@ -394,7 +391,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   emailInput.addEventListener("blur", validateEmail);
   document
     .getElementById("endereco")
-    .addEventListener("blur", validateEndereco);
+    .addEventListener("blur", () => validateEndereco()); // Usa a referência correta do input
   document
     .getElementById("modeloXbox")
     .addEventListener("change", validateModeloXbox);
@@ -441,11 +438,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     showInlineError(errorEndereco, document.getElementById("endereco"), "");
     showInlineError(errorModeloXbox, document.getElementById("modeloXbox"), "");
     showInlineError(errorAnoXbox, document.getElementById("anoXbox"), "");
-    showInlineError(
-      errorTipoHd,
-      document.querySelector('input[name="tipoHd"]').closest("div.mb-6"),
-      ""
-    );
+    showInlineError(errorTipoHd, null, "");
 
     if (!validateForm()) {
       setFormLoadingState(false);

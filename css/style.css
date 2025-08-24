@@ -178,7 +178,7 @@ button[type="submit"] {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    margin-top: 1.5rem;
+    /*margin-top: 1rem;*/
     width: 100%;
 }
 
@@ -275,4 +275,17 @@ details[open] summary::before {
     header h1 {
         font-size: 3.5rem;
     }
+}
+
+/*Ano Xbox*/
+.anoXbox {
+    margin: 0px 15px 0px 0px;
+}
+
+button.onde-encontrar{
+    background-color: #ff2600;
+}
+
+button.onde-encontrar:hover{
+    background-color: #fa8975;
 }
