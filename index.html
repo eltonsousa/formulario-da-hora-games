@@ -62,7 +62,10 @@
                 <div id="error-modeloXbox" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
             <div class="mb-6">
-                <label for="anoXbox" class="block text-gray-300 text-sm font-bold mb-2">Ano do Xbox: <i class="fas fa-info-circle text-gray-400 text-lg cursor-help ml-1" title="Verificar a etiqueta atrás do aparelho."></i></label>
+                <label for="anoXbox" class="block text-gray-300 text-sm font-bold mb-2">Ano do Xbox: <i id="anoXboxHelpIcon" class="fas fa-info-circle text-gray-400 text-lg cursor-help ml-1"></i></label>
+                <div id="yearHelpMessage" class="bg-gray-700 text-gray-200 text-sm p-2 rounded-md mt-1 hidden">
+                    Verificar a etiqueta atrás do aparelho.
+                </div>
                 <select id="anoXbox" name="anoXbox" required
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
                     <option value="">Selecione o ano</option>

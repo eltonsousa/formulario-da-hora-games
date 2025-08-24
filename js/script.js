@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     OPENING_MAP_TEXT: "Abrindo Mapa...",
     UNSAVED_CHANGES_WARNING:
       "Você tem alterações não salvas. Tem certeza que deseja sair?",
-    XBOX_2015_WARNING: "Não será possível fazer desbloqueio definitivo!", // Nova mensagem
+    XBOX_2015_WARNING: "Não será possível fazer desbloqueio definitivo!",
   };
 
   const CSS_CLASSES = {
@@ -72,11 +72,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   const messageBox = document.getElementById("messageBox");
   const gameCountDisplay = document.getElementById("gameCountDisplay");
   const maxGameLimit = document.getElementById("maxGameLimit");
+  const anoXboxHelpIcon = document.getElementById("anoXboxHelpIcon"); // Novo elemento
+  const yearHelpMessage = document.getElementById("yearHelpMessage"); // Novo elemento
 
   const errorNome = document.getElementById("error-nome");
   const errorTelefone = document.getElementById("error-telefone");
   const errorEmail = document.getElementById("error-email");
-  const errorEndereco = document.getElementById("error-endereco");
+  const errorEndereco = document.getElementById("endereco");
   const errorModeloXbox = document.getElementById("error-modeloXbox");
   const errorAnoXbox = document.getElementById("error-anoXbox");
   const errorTipoHd = document.getElementById("error-tipoHd");
@@ -115,7 +117,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (message) {
       errorElement.textContent = message;
       errorElement.classList.remove(CSS_CLASSES.HIDDEN);
-      // Para radio buttons, a borda vermelha deve ser aplicada a um wrapper ou não ser aplicada ao input
       if (inputElement.type !== "radio") {
         inputElement.classList.add(CSS_CLASSES.BORDER_RED);
       }
@@ -254,14 +255,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       showInlineError(errorAnoXbox, input, MESSAGES.REQUIRED_FIELD);
       isValid = false;
     } else if (selectedYear === "2015") {
-      // Check for the specific year 2015
       showInlineError(errorAnoXbox, input, MESSAGES.XBOX_2015_WARNING);
-      // This is a warning, not a hard error that prevents form submission, so we still return true
-      // but we make sure the error is displayed.
     } else {
       showInlineError(errorAnoXbox, input, "");
     }
-    return isValid; // Returns true even for 2015, as it's a warning. Returns false if empty.
+    return isValid;
   }
 
   function validateTipoHd() {
@@ -269,7 +267,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
     const radioGroupWrapper = document
       .querySelector('input[name="tipoHd"]')
-      .closest("div.mb-6"); // Elemento pai que contém os rádios para borda
+      .closest("div.mb-6");
     if (!anyHdSelected) {
       showInlineError(
         errorTipoHd,
@@ -298,13 +296,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   function validateForm() {
     let isValid = true;
 
-    // Ensure all validations run, and `isValid` tracks if any returned false (for hard errors)
     isValid = validateNome() && isValid;
     isValid = validateTelefone() && isValid;
     isValid = validateEmail() && isValid;
     isValid = validateEndereco() && isValid;
     isValid = validateModeloXbox() && isValid;
-    isValid = validateAnoXbox() && isValid; // validateAnoXbox might display a warning but still return true
+    isValid = validateAnoXbox() && isValid;
     isValid = validateTipoHd() && isValid;
 
     if (!validateGameSelection()) {
@@ -369,6 +366,22 @@ document.addEventListener("DOMContentLoaded", async function () {
     }, 2000);
   });
 
+  // --- Lógica para o ícone de ajuda do Ano do Xbox ---
+  anoXboxHelpIcon.addEventListener("click", (event) => {
+    event.stopPropagation(); // Impede que o clique se propague para o documento
+    yearHelpMessage.classList.toggle(CSS_CLASSES.HIDDEN);
+  });
+
+  // Fechar a mensagem de ajuda se clicar fora dela
+  document.addEventListener("click", (event) => {
+    if (
+      !yearHelpMessage.classList.contains(CSS_CLASSES.HIDDEN) &&
+      !anoXboxHelpIcon.contains(event.target)
+    ) {
+      yearHelpMessage.classList.add(CSS_CLASSES.HIDDEN);
+    }
+  });
+
   handleHdSelection();
   updateGameCountDisplay();
 
@@ -388,7 +401,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("anoXbox")
     .addEventListener("change", validateAnoXbox);
-  document.getElementById("anoXbox").addEventListener("blur", validateAnoXbox); // Also validate on blur
+  document.getElementById("anoXbox").addEventListener("blur", validateAnoXbox);
 
   hdInternoRadio.addEventListener("change", () => {
     handleHdSelection();
@@ -422,7 +435,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     messageBox.classList.add(CSS_CLASSES.HIDDEN);
 
-    // Limpa erros inline antes de revalidar
     showInlineError(errorNome, document.getElementById("nome"), "");
     showInlineError(errorTelefone, telefoneInput, "");
     showInlineError(errorEmail, emailInput, "");
