@@ -3,78 +3,128 @@
  * Este script gerencia a interação do formulário, validações,
  * formatação de entrada e a integração com o WhatsApp, agora
  * utilizando as funções de banco de dados do `supabase_db.js`
- * para salvar os dados do formulário no Supabase.
+ * para salvar os dados do formulário no Supabase, e também inclui
+ * a funcionalidade de fornecer a localização da loja.
  */
 
-// Acessa as funções expostas globalmente pelo supabase_db.js
 const { initialize: initializeSupabase, saveXboxConfig } = window.supabaseDb;
 
 document.addEventListener("DOMContentLoaded", async function () {
-  // Referências aos elementos do DOM
+  // --- Objeto de Configuração Centralizado ---
+  const config = {
+    maxGamesSelection: 15,
+    whatsappNumber: "5592993312208", // ALtere para o seu número de WhatsApp!
+    storeLocation: {
+      latitude: -3.029132597030824, // SUBSTITUA PELA LATITUDE REAL DA SUA LOJA.
+      longitude: -60.006103378990616, // SUBSTITUA PELA LONGITUDE REAL DA SUA LOJA.
+    },
+  };
+
+  const MESSAGES = {
+    REQUIRED_FIELD: "Este campo é obrigatório.",
+    INVALID_TELEPHONE: "Por favor, insira um telefone válido (XX) XXXXX-XXXX.",
+    INVALID_EMAIL: "Por favor, insira um e-mail válido.",
+    SELECT_HD_OPTION: "Por favor, selecione uma opção de HD.",
+    SELECT_GAMES_OR_NO_HD:
+      "Escolha pelo menos um jogo ou desmarque a opção de HD se não quiser copiar jogos.",
+    GAME_LIMIT_EXCEEDED: (max) =>
+      `Você só pode escolher no máximo ${max} jogos.`,
+    GENERIC_ERROR: (msg) => `Erro inesperado: ${msg}`,
+    DB_SAVE_ERROR: (msg) => `Erro ao salvar no banco de dados: ${msg}`,
+    SENDING: "Enviando...",
+    ORIGINAL_BUTTON_TEXT: "Enviar para WhatsApp",
+    VIEW_LOCATION_TEXT: "Ver Localização da Loja",
+    OPENING_MAP_TEXT: "Abrindo Mapa...",
+    UNSAVED_CHANGES_WARNING:
+      "Você tem alterações não salvas. Tem certeza que deseja sair?",
+  };
+
+  const CSS_CLASSES = {
+    HIDDEN: "hidden",
+    BORDER_RED: "border-red-500",
+    BG_GREEN: "bg-green-600",
+    BG_GREEN_HOVER: "hover:bg-green-700",
+    BG_DISABLED: "bg-gray-600",
+    CURSOR_NOT_ALLOWED: "cursor-not-allowed",
+    TEXT_RED: "text-red-400",
+    TEXT_LG: "text-lg",
+    FONT_BOLD: "font-bold",
+    BG_BLUE_200: "bg-blue-200",
+    TEXT_BLUE_800: "text-blue-800",
+    BG_RED_200: "bg-red-200",
+    TEXT_RED_800: "text-red-800",
+    BG_GREEN_200: "bg-green-200",
+    TEXT_GREEN_800: "text-green-800",
+  };
+
   const form = document.getElementById("xboxConfigForm");
+  const enviarWhatsappBtn = document.getElementById("enviarWhatsapp");
+  const viewStoreLocationBtn = document.getElementById("viewStoreLocationBtn");
   const telefoneInput = document.getElementById("telefone");
+  const emailInput = document.getElementById("email");
   const hdInternoRadio = document.getElementById("hdInterno");
   const hdExternoRadio = document.getElementById("hdExterno");
-  const pendriveRadio = document.getElementById("pendrive"); // Elemento para o pendrive
+  const pendriveRadio = document.getElementById("pendrive");
   const hdWarning = document.getElementById("hdWarning");
   const gameCheckboxes = document.querySelectorAll('input[name="jogos"]');
   const gameLimitWarning = document.getElementById("gameLimitWarning");
   const messageBox = document.getElementById("messageBox");
+  const gameCountDisplay = document.getElementById("gameCountDisplay");
+  const maxGameLimit = document.getElementById("maxGameLimit");
 
-  // --- Constantes ---
-  const MAX_GAMES_SELECTION = 15; // Limite de jogos que podem ser escolhidos
-  const WHATSAPP_NUMBER = "5592993312208"; // ALtere para o seu número de WhatsApp!
+  const errorNome = document.getElementById("error-nome");
+  const errorTelefone = document.getElementById("error-telefone");
+  const errorEmail = document.getElementById("error-email");
+  const errorEndereco = document.getElementById("error-endereco");
+  const errorModeloXbox = document.getElementById("error-modeloXbox");
+  const errorAnoXbox = document.getElementById("error-anoXbox");
+  const errorTipoHd = document.getElementById("error-tipoHd");
 
-  // --- Funções de Utilitário ---
+  let isFormDirty = false;
 
-  /**
-   * Exibe uma mensagem de feedback para o usuário.
-   * @param {string} msg A mensagem a ser exibida.
-   * @param {'success'|'error'|'info'} type O tipo da mensagem (determina a cor).
-   */
-  function showMessage(msg, type) {
+  function showGlobalMessage(msg, type) {
     messageBox.textContent = msg;
-    messageBox.classList.remove(
-      "hidden",
-      "bg-red-200",
-      "text-red-800",
-      "bg-green-200",
-      "text-green-800",
-      "bg-blue-200",
-      "text-blue-800",
-      "font-bold",
-      "text-lg"
-    ); // Removendo estilos anteriores
+    messageBox.className = `mt-4 p-3 rounded-lg text-center ${CSS_CLASSES.FONT_BOLD}`;
 
     if (type === "error") {
-      messageBox.classList.add("bg-red-200", "text-red-800");
+      messageBox.classList.add(
+        CSS_CLASSES.BG_RED_200,
+        CSS_CLASSES.TEXT_RED_800
+      );
     } else if (type === "success") {
       messageBox.classList.add(
-        "bg-green-200",
-        "text-green-800",
-        "font-bold",
-        "text-lg"
-      ); // Estilos para sucesso mais proeminente
+        CSS_CLASSES.BG_GREEN_200,
+        CSS_CLASSES.TEXT_GREEN_800,
+        CSS_CLASSES.TEXT_LG
+      );
     } else if (type === "info") {
-      messageBox.classList.add("bg-blue-200", "text-blue-800");
+      messageBox.classList.add(
+        CSS_CLASSES.BG_BLUE_200,
+        CSS_CLASSES.TEXT_BLUE_800
+      );
     }
-    messageBox.classList.remove("hidden");
+    messageBox.classList.remove(CSS_CLASSES.HIDDEN);
 
-    // Esconde a mensagem após 5 segundos
     setTimeout(() => {
-      messageBox.classList.add("hidden");
+      messageBox.classList.add(CSS_CLASSES.HIDDEN);
     }, 5000);
   }
 
-  /**
-   * Formata o número de telefone no padrão (XX) XXXXX-XXXX.
-   * Remove todos os caracteres não numéricos e aplica a máscara.
-   * @param {string} value O valor bruto do input de telefone.
-   * @returns {string} O número de telefone formatado.
-   */
+  function showInlineError(errorElement, inputElement, message) {
+    if (message) {
+      errorElement.textContent = message;
+      errorElement.classList.remove(CSS_CLASSES.HIDDEN);
+      inputElement.classList.add(CSS_CLASSES.BORDER_RED);
+    } else {
+      errorElement.textContent = "";
+      errorElement.classList.add(CSS_CLASSES.HIDDEN);
+      inputElement.classList.remove(CSS_CLASSES.BORDER_RED);
+    }
+  }
+
   function formatTelefone(value) {
     if (!value) return "";
-    let cleanedValue = value.replace(/\D/g, ""); // Remove tudo que não for dígito
+    let cleanedValue = value.replace(/\D/g, "");
     let formattedValue = "";
 
     if (cleanedValue.length > 0) {
@@ -89,196 +139,374 @@ document.addEventListener("DOMContentLoaded", async function () {
     return formattedValue;
   }
 
-  // --- Funções de Validação e Lógica de Interface ---
+  function setFormLoadingState(isLoading) {
+    enviarWhatsappBtn.disabled = isLoading;
+    if (isLoading) {
+      enviarWhatsappBtn.textContent = MESSAGES.SENDING;
+      enviarWhatsappBtn.classList.remove(
+        CSS_CLASSES.BG_GREEN,
+        CSS_CLASSES.BG_GREEN_HOVER
+      );
+      enviarWhatsappBtn.classList.add(
+        CSS_CLASSES.BG_DISABLED,
+        CSS_CLASSES.CURSOR_NOT_ALLOWED
+      );
+    } else {
+      enviarWhatsappBtn.textContent = MESSAGES.ORIGINAL_BUTTON_TEXT;
+      enviarWhatsappBtn.classList.add(
+        CSS_CLASSES.BG_GREEN,
+        CSS_CLASSES.BG_GREEN_HOVER
+      );
+      enviarWhatsappBtn.classList.remove(
+        CSS_CLASSES.BG_DISABLED,
+        CSS_CLASSES.CURSOR_NOT_ALLOWED
+      );
+    }
+  }
 
-  /**
-   * Valida o número de jogos selecionados.
-   * Permite no máximo MAX_GAMES_SELECTION jogos.
-   */
-  function validateGameSelection() {
-    let selectedGames = document.querySelectorAll(
+  function updateGameCountDisplay() {
+    const selectedGamesCount = document.querySelectorAll(
       'input[name="jogos"]:checked'
     ).length;
+    gameCountDisplay.textContent = selectedGamesCount;
+    maxGameLimit.textContent = config.maxGamesSelection;
+  }
 
-    if (selectedGames > MAX_GAMES_SELECTION) {
-      gameLimitWarning.classList.remove("hidden");
-      // Desativa o último jogo selecionado se o limite for excedido
-      const checkboxes = Array.from(
-        document.querySelectorAll('input[name="jogos"]:checked')
-      );
-      if (checkboxes.length > MAX_GAMES_SELECTION) {
-        checkboxes[checkboxes.length - 1].checked = false;
-      }
+  function addFormDirtyListeners() {
+    const inputs = form.querySelectorAll("input, select, textarea");
+    inputs.forEach((input) => {
+      input.addEventListener("input", () => {
+        isFormDirty = true;
+      });
+      input.addEventListener("change", () => {
+        isFormDirty = true;
+      });
+    });
+  }
+
+  function resetFormDirtyState() {
+    isFormDirty = false;
+  }
+
+  function validateNome() {
+    const input = document.getElementById("nome");
+    if (!input.value.trim()) {
+      showInlineError(errorNome, input, MESSAGES.REQUIRED_FIELD);
+      return false;
+    }
+    showInlineError(errorNome, input, "");
+    return true;
+  }
+
+  function validateTelefone() {
+    const input = document.getElementById("telefone");
+    if (!input.value.trim() || input.value.replace(/\D/g, "").length < 10) {
+      showInlineError(errorTelefone, input, MESSAGES.INVALID_TELEPHONE);
+      return false;
+    }
+    showInlineError(errorTelefone, input, "");
+    return true;
+  }
+
+  function validateEmail() {
+    const input = document.getElementById("email");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!input.value.trim() || !emailRegex.test(input.value.trim())) {
+      showInlineError(errorEmail, input, MESSAGES.INVALID_EMAIL);
+      return false;
+    }
+    showInlineError(errorEmail, input, "");
+    return true;
+  }
+
+  function validateEndereco() {
+    const input = document.getElementById("endereco");
+    if (!input.value.trim()) {
+      showInlineError(errorEndereco, input, MESSAGES.REQUIRED_FIELD);
+      return false;
+    }
+    showInlineError(errorEndereco, input, "");
+    return true;
+  }
+
+  function validateModeloXbox() {
+    const input = document.getElementById("modeloXbox");
+    if (!input.value) {
+      showInlineError(errorModeloXbox, input, MESSAGES.REQUIRED_FIELD);
+      return false;
+    }
+    showInlineError(errorModeloXbox, input, "");
+    return true;
+  }
+
+  function validateAnoXbox() {
+    const input = document.getElementById("anoXbox");
+    if (!input.value) {
+      showInlineError(errorAnoXbox, input, MESSAGES.REQUIRED_FIELD);
+      return false;
+    }
+    showInlineError(errorAnoXbox, input, "");
+    return true;
+  }
+
+  function validateTipoHd() {
+    const anyHdSelected =
+      hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
+    const radioGroup = document.querySelector('input[name="tipoHd"]'); // Refere-se ao grupo para aplicar o erro
+    if (!anyHdSelected) {
+      showInlineError(errorTipoHd, radioGroup, MESSAGES.SELECT_HD_OPTION);
+      return false;
+    }
+    showInlineError(errorTipoHd, radioGroup, "");
+    return true;
+  }
+
+  function validateGameSelection() {
+    let selectedGamesCount = document.querySelectorAll(
+      'input[name="jogos"]:checked'
+    ).length;
+    if (selectedGamesCount > config.maxGamesSelection) {
+      gameLimitWarning.classList.remove(CSS_CLASSES.HIDDEN);
       return false;
     } else {
-      gameLimitWarning.classList.add("hidden");
+      gameLimitWarning.classList.add(CSS_CLASSES.HIDDEN);
       return true;
     }
   }
 
-  /**
-   * Lógica para mostrar/esconder aviso de HD e habilitar/desabilitar seleção de jogos.
-   */
+  function validateForm() {
+    let isValid = true;
+
+    isValid = validateNome() && isValid;
+    isValid = validateTelefone() && isValid;
+    isValid = validateEmail() && isValid;
+    isValid = validateEndereco() && isValid;
+    isValid = validateModeloXbox() && isValid;
+    isValid = validateAnoXbox() && isValid;
+    isValid = validateTipoHd() && isValid;
+
+    if (!validateGameSelection()) {
+      isValid = false;
+    }
+
+    const anyHdSelected =
+      hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
+    const jogosSelecionadosCount = document.querySelectorAll(
+      'input[name="jogos"]:checked'
+    ).length;
+
+    if (anyHdSelected && jogosSelecionadosCount === 0) {
+      showGlobalMessage(MESSAGES.SELECT_GAMES_OR_NO_HD, "error");
+      isValid = false;
+    } else if (!anyHdSelected && jogosSelecionadosCount > 0) {
+      showGlobalMessage("Desmarque os jogos se não for usar HD.", "error");
+      isValid = false;
+    }
+
+    if (!isValid) {
+      const firstInvalidInput = form.querySelector(".border-red-500");
+      if (firstInvalidInput) {
+        firstInvalidInput.focus();
+      }
+    }
+    return isValid;
+  }
+
   function handleHdSelection() {
-    if (
-      !hdInternoRadio.checked &&
-      !hdExternoRadio.checked &&
-      !pendriveRadio.checked
-    ) {
-      hdWarning.classList.remove("hidden");
-      // Desabilita a seleção de jogos se não tiver HD
+    const anyHdSelected =
+      hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
+
+    if (!anyHdSelected) {
+      hdWarning.classList.remove(CSS_CLASSES.HIDDEN);
       gameCheckboxes.forEach((checkbox) => {
-        checkbox.checked = false; // Desmarca qualquer jogo selecionado
-        checkbox.disabled = true; // Desabilita o checkbox
+        checkbox.checked = false;
+        checkbox.disabled = true;
       });
     } else {
-      hdWarning.classList.add("hidden");
-      // Habilita a seleção de jogos se tiver HD
+      hdWarning.classList.add(CSS_CLASSES.HIDDEN);
       gameCheckboxes.forEach((checkbox) => {
         checkbox.disabled = false;
       });
     }
-    validateGameSelection(); // Revalida a seleção após mudanças de HD
+    validateGameSelection();
+    updateGameCountDisplay();
+    validateTipoHd(); // Garante que o erro de HD seja limpo se uma opção for selecionada
   }
 
-  // --- Inicialização e Event Listeners ---
+  viewStoreLocationBtn.addEventListener("click", () => {
+    viewStoreLocationBtn.disabled = true;
+    const originalText = viewStoreLocationBtn.textContent;
+    viewStoreLocationBtn.textContent = MESSAGES.OPENING_MAP_TEXT;
 
-  // Inicializa a lógica de HD e jogos ao carregar a página
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${config.storeLocation.latitude},${config.storeLocation.longitude}`;
+    window.open(googleMapsUrl, "_blank");
+
+    setTimeout(() => {
+      viewStoreLocationBtn.textContent = originalText;
+      viewStoreLocationBtn.disabled = false;
+    }, 2000);
+  });
+
   handleHdSelection();
+  updateGameCountDisplay();
 
-  // Adição de Event Listeners para o formulário e elementos da UI
   telefoneInput.addEventListener("input", function (event) {
     event.target.value = formatTelefone(event.target.value);
   });
 
-  gameCheckboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", validateGameSelection);
+  document.getElementById("nome").addEventListener("blur", validateNome);
+  telefoneInput.addEventListener("blur", validateTelefone);
+  emailInput.addEventListener("blur", validateEmail);
+  document
+    .getElementById("endereco")
+    .addEventListener("blur", validateEndereco);
+  document
+    .getElementById("modeloXbox")
+    .addEventListener("change", validateModeloXbox);
+  document
+    .getElementById("anoXbox")
+    .addEventListener("change", validateAnoXbox);
+
+  hdInternoRadio.addEventListener("change", () => {
+    handleHdSelection();
+  });
+  hdExternoRadio.addEventListener("change", () => {
+    handleHdSelection();
+  });
+  pendriveRadio.addEventListener("change", () => {
+    handleHdSelection();
   });
 
-  hdInternoRadio.addEventListener("change", handleHdSelection);
-  hdExternoRadio.addEventListener("change", handleHdSelection);
-  pendriveRadio.addEventListener("change", handleHdSelection);
+  gameCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      validateGameSelection();
+      updateGameCountDisplay();
+    });
+  });
+
+  addFormDirtyListeners();
+
+  window.addEventListener("beforeunload", (event) => {
+    if (isFormDirty) {
+      event.preventDefault();
+      event.returnValue = MESSAGES.UNSAVED_CHANGES_WARNING;
+      return MESSAGES.UNSAVED_CHANGES_WARNING;
+    }
+  });
 
   form.addEventListener("submit", async function (event) {
-    event.preventDefault(); // Impede o envio padrão do formulário
+    event.preventDefault();
 
-    // 1. Coleta e validação dos dados do formulário
-    const nome = document.getElementById("nome").value.trim();
-    const telefone = telefoneInput.value.trim();
-    const email = document.getElementById("email").value.trim();
-    const endereco = document.getElementById("endereco").value.trim();
-    const modeloXbox = document.getElementById("modeloXbox").value;
-    const anoXbox = document.getElementById("anoXbox").value;
+    messageBox.classList.add(CSS_CLASSES.HIDDEN);
 
-    let tipoHd = "";
-    if (hdInternoRadio.checked) {
-      tipoHd = hdInternoRadio.value;
-    } else if (hdExternoRadio.checked) {
-      tipoHd = hdExternoRadio.value;
-    } else if (pendriveRadio.checked) {
-      tipoHd = pendriveRadio.value;
-    }
+    showInlineError(errorNome, document.getElementById("nome"), "");
+    showInlineError(errorTelefone, telefoneInput, "");
+    showInlineError(errorEmail, emailInput, "");
+    showInlineError(errorEndereco, document.getElementById("endereco"), "");
+    showInlineError(errorModeloXbox, document.getElementById("modeloXbox"), "");
+    showInlineError(errorAnoXbox, document.getElementById("anoXbox"), "");
+    showInlineError(
+      errorTipoHd,
+      document.querySelector('input[name="tipoHd"]'),
+      ""
+    ); // Limpa o erro do grupo de rádios
 
-    const jogosSelecionados = [];
-    gameCheckboxes.forEach((checkbox) => {
-      if (checkbox.checked) {
-        jogosSelecionados.push(checkbox.value);
-      }
-    });
-
-    // Validações
-    if (!nome || !telefone || !email || !endereco || !modeloXbox || !anoXbox) {
-      showMessage("Por favor, preencha todos os campos obrigatórios.", "error");
+    if (!validateForm()) {
+      setFormLoadingState(false);
       return;
     }
-    if (
-      !hdInternoRadio.checked &&
-      !hdExternoRadio.checked &&
-      !pendriveRadio.checked
-    ) {
-      showMessage("Por favor, selecione uma opção de HD.", "error");
-      return;
-    }
-    if (
-      jogosSelecionados.length === 0 &&
-      (hdInternoRadio.checked ||
-        hdExternoRadio.checked ||
-        pendriveRadio.checked)
-    ) {
-      showMessage(
-        "Escolha pelo menos um jogo ou desmarque a opção de HD se não quiser copiar jogos.",
-        "error"
-      );
-      return;
-    }
-    if (!validateGameSelection()) {
-      showMessage(
-        `Você só pode escolher no máximo ${MAX_GAMES_SELECTION} jogos.`,
-        "error"
-      );
-      return;
-    }
+
+    setFormLoadingState(true);
 
     try {
-      // 2. Salva a configuração no Supabase
+      const nome = document.getElementById("nome").value.trim();
+      const telefone = telefoneInput.value.trim();
+      const email = emailInput.value.trim();
+      const endereco = document.getElementById("endereco").value.trim();
+      const modeloXbox = document.getElementById("modeloXbox").value;
+      const anoXbox = document.getElementById("anoXbox").value;
+
+      let tipoHd = "";
+      if (hdInternoRadio.checked) {
+        tipoHd = hdInternoRadio.value;
+      } else if (hdExternoRadio.checked) {
+        tipoHd = hdExternoRadio.value;
+      } else if (pendriveRadio.checked) {
+        tipoHd = pendriveRadio.value;
+      }
+
+      const jogosSelecionados = [];
+      gameCheckboxes.forEach((checkbox) => {
+        if (checkbox.checked) {
+          jogosSelecionados.push(checkbox.value);
+        }
+      });
+
       const configToSave = {
         nome,
         telefone,
         email,
         endereco,
         modeloXbox,
-        anoXbox: parseInt(anoXbox), // Garante que o ano seja um número
+        anoXbox: parseInt(anoXbox),
         tipoHd,
-        jogosSelecionados, // Supabase aceita array de strings em coluna jsonb
+        jogosSelecionados,
       };
 
       const { data, error } = await saveXboxConfig(configToSave);
 
       if (error) {
         console.error("Erro ao salvar no Supabase:", error);
-        showMessage(`Erro ao salvar no banco de dados: ${error}`, "error");
+        // Tratamento de Erros Supabase Mais Detalhado:
+        // Exibe a mensagem de erro específica do Supabase.
+        showGlobalMessage(
+          MESSAGES.DB_SAVE_ERROR(
+            error.message || "Verifique sua conexão e tente novamente."
+          ),
+          "error"
+        );
+        setFormLoadingState(false);
         return;
       }
 
-      // Acessa o ID de forma segura
-      // const savedId = (data && data.id) ? data.id : 'desconhecido';
-      // showMessage(`Dados enviados com sucesso! ID: ${savedId}`, 'success'); // Mensagem de sucesso removida
+      let whatsappMessage = `*Orçamento/Desbloqueio Xbox 360*\n\n`;
+      whatsappMessage += `*Informações Pessoais:*\n`;
+      whatsappMessage += `Nome: ${nome}\n`;
+      whatsappMessage += `Telefone: ${telefone}\n`;
+      whatsappMessage += `Email: ${email}\n`;
+      whatsappMessage += `Endereço: ${endereco}\n\n`;
 
-      // 3. Montagem da mensagem para o WhatsApp
-      let message = `*Orçamento/Desbloqueio Xbox 360*\n\n`;
-      message += `*Informações Pessoais:*\n`;
-      message += `Nome: ${nome}\n`;
-      message += `Telefone: ${telefone}\n`;
-      message += `Email: ${email}\n`;
-      message += `Endereço: ${endereco}\n\n`;
-
-      message += `*Detalhes do Xbox:*\n`;
-      message += `Modelo: ${modeloXbox.toUpperCase()}\n`;
-      message += `Ano: ${anoXbox}\n`;
-      message += `Armazenamento: ${tipoHd}\n\n`;
+      whatsappMessage += `*Detalhes do Xbox:*\n`;
+      whatsappMessage += `Modelo: ${modeloXbox.toUpperCase()}\n`;
+      whatsappMessage += `Ano: ${anoXbox}\n`;
+      whatsappMessage += `Armazenamento: ${tipoHd}\n\n`;
 
       if (jogosSelecionados.length > 0) {
-        message += `*Jogos Escolhidos:*\n`;
+        whatsappMessage += `*Jogos Escolhidos:*\n`;
         jogosSelecionados.forEach((jogo) => {
-          message += `- ${jogo}\n`;
+          whatsappMessage += `- ${jogo}\n`;
         });
       } else if (tipoHd) {
-        message += `Nenhum jogo selecionado para cópia.\n`;
+        whatsappMessage += `Nenhum jogo selecionado para cópia.\n`;
       } else {
-        message += `Não é possível copiar jogos sem HD.\n`;
+        whatsappMessage += `Não é possível copiar jogos sem HD.\n`;
       }
-      message += `\n_Gerado via App Da Hora Games_`;
+      whatsappMessage += `\n_Gerado via App Da Hora Games_`;
 
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(
-        message
-      )}`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${
+        config.whatsappNumber
+      }&text=${encodeURIComponent(whatsappMessage)}`;
 
       window.open(whatsappUrl, "_system");
-      form.reset(); // Limpa o formulário após o envio
-      handleHdSelection(); // Reaplicar a lógica de HD/jogos
+      form.reset();
+      handleHdSelection();
+      resetFormDirtyState();
+
+      setFormLoadingState(false);
     } catch (e) {
       console.error("Erro inesperado ao processar formulário: ", e);
-      showMessage(`Erro inesperado: ${e.message}`, "error");
+      showGlobalMessage(MESSAGES.GENERIC_ERROR(e.message), "error");
+      setFormLoadingState(false);
     }
   });
 });

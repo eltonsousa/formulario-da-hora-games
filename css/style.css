@@ -87,9 +87,15 @@ select { /* Estilo específico para select */
     margin-bottom: 1rem;
     border: 1px solid #4a5568; /* Borda cinza escuro */
     border-radius: 0.5rem; /* Cantos arredondados */
-    background-color: #4a5568; /* Fundo do select um pouco mais claro */
+    background-color: #5a6e83; /* Fundo do select um pouco mais claro */
     color: #e2e8f0; /* Cor do texto do select */
     transition: all 0.3s ease-in-out;
+}
+
+/* Estilo para as opções dentro do select */
+select option {
+    background-color: #ffffff; /* Fundo branco */
+    color: #1a202c; /* Texto escuro */
 }
 
 
@@ -107,7 +113,7 @@ select:focus {
     outline: none;
     border-color: #10B981; /* Borda verde ao focar */
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5); /* Sombra verde ao focar */
-    background-color: #6b849e; /* Fundo mais claro ao focar */
+    background-color: #a0aec0; /* Fundo bem mais claro ao focar */
 }
 
 
@@ -182,6 +188,13 @@ button[type="submit"]:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
+button[type="submit"]:disabled {
+    background-color: #4a5568; /* Cor para botão desabilitado */
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 /* Estilo para o summary da lista de jogos */
 details summary {
     list-style: none; /* Remove a seta padrão do summary */
@@ -211,13 +224,20 @@ details[open] summary::before {
     margin-top: 0.5rem;
 }
 
-/* Estilos para mensagens de feedback (sucesso/erro) */
+/* Estilos para mensagens de feedback (success/error) */
 #messageBox {
     margin-top: 1rem;
     padding: 1rem;
     border-radius: 0.5rem;
     text-align: center;
     font-weight: bold;
+}
+
+/* Estilos para mensagens de erro inline */
+.error-message {
+    color: #ef4444; /* text-red-500 */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
 /* Estilos responsivos */

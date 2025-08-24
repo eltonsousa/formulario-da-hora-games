@@ -4,10 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Desbloqueio Xbox 360</title>
-    <!-- Link para o arquivo CSS de estilos -->
+    <title>Configurações Xbox 360</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Importa as fontes do Google Fonts para um estilo retrô e legível -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
 </head>
@@ -15,54 +13,57 @@
 <body class="bg-gray-900 text-gray-100 font-sans">
     <div class="container mx-auto p-4 sm:p-6 md:p-8">
         <header class="text-center mb-8">
-            <!-- Logo será inserida aqui -->
-            <img src="img/logo.png" alt="Sua Logo" class="mx-auto mb-4 w-32 h-auto rounded-full shadow-md">
+            <img src="img/logo.png" alt="Sua Logo" class="mx-auto mb-4 w-32 h-auto rounded-full shadow-md"
+                width="128" height="128" loading="lazy"
+                onerror="this.onerror=null;this.src='https://placehold.co/128x128/34D399/FFFFFF?text=Logo';">
             <h1 class="text-4xl font-bold text-green-500 mb-2">Formulário Da Hora Games</h1>
-            <p class="text-gray-300">Preencha os detalhes para desbloquear seu Xbox 360 e envie para o WhatsApp.</p>
+            <p class="text-gray-300">Preencha os detalhes para desbloquear seu Xbox 360 e enviar para o WhatsApp.</p>
         </header>
 
         <form id="xboxConfigForm" class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg">
-            <!-- Informações Pessoais -->
             <h2 class="text-2xl font-semibold text-green-400 mb-4">Informações Pessoais</h2>
             <div class="mb-4">
                 <label for="nome" class="block text-gray-300 text-sm font-bold mb-2">Nome e Sobrenome:</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
+                <div id="error-nome" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
             <div class="mb-4">
                 <label for="telefone" class="block text-gray-300 text-sm font-bold mb-2">Telefone (com DDD):</label>
                 <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
+                <div id="error-telefone" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
             <div class="mb-4">
                 <label for="email" class="block text-gray-300 text-sm font-bold mb-2">Email:</label>
                 <input type="email" id="email" name="email" placeholder="seu.email@exemplo.com" required
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
+                <div id="error-email" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
             <div class="mb-6">
                 <label for="endereco" class="block text-gray-300 text-sm font-bold mb-2">Endereço:</label>
                 <input type="text" id="endereco" name="endereco" placeholder="Rua, Número - Bairro" required
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
+                <div id="error-endereco" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
 
-            <!-- Detalhes do Xbox -->
-            <h2 class="text-2xl font-semibold text-green-400 mb-4">Detalhes do Xbox:</h2>
+            <h2 class="text-2xl font-semibold text-green-400 mb-4">Detalhes do Xbox</h2>
             <div class="mb-4">
                 <label for="modeloXbox" class="block text-gray-300 text-sm font-bold mb-2">Modelo do Xbox 360:</label>
                 <select id="modeloXbox" name="modeloXbox" required
-                    class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
                     <option value="">Selecione o modelo</option>
                     <option value="fat">Fat</option>
                     <option value="slim">Slim</option>
                     <option value="super-slim">Super Slim</option>
                 </select>
+                <div id="error-modeloXbox" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
             <div class="mb-6">
                 <label for="anoXbox" class="block text-gray-300 text-sm font-bold mb-2">Ano do Xbox:</label>
                 <select id="anoXbox" name="anoXbox" required
-                    class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
                     <option value="">Selecione o ano</option>
-                    <!-- Anos de 2007 a 2014 -->
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
                             const anoXboxSelect = document.getElementById('anoXbox');
@@ -75,10 +76,10 @@
                         });
                     </script>
                 </select>
+                <div id="error-anoXbox" class="text-red-400 text-sm mt-1 hidden"></div>
             </div>
 
-            <!-- Opções de HD -->
-            <h2 class="text-2xl font-semibold text-green-400 mb-4">Armazenamento (HD, SSD, Pendrive)</h2>
+            <h2 class="text-2xl font-semibold text-green-400 mb-4">Opções de Armazenamento (HD)</h2>
             <div class="mb-6">
                 <div class="flex items-center mb-2">
                     <input type="radio" id="hdInterno" name="tipoHd" value="HD Interno"
@@ -95,14 +96,14 @@
                         class="mr-2 form-radio text-green-500">
                     <label for="pendrive" class="text-gray-300">Pendrive de 16GB ou mais</label>
                 </div>
+                <div id="error-tipoHd" class="text-red-400 text-sm mt-1 hidden"></div>
                 <p id="hdWarning" class="text-red-400 text-sm mt-2 hidden">Atenção: Sem HD, não será possível copiar
                     jogos!</p>
             </div>
 
-            <!-- Seleção de Jogos -->
             <details id="gameSelectionDetails" class="mb-6">
                 <summary class="text-2xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out">
-                    Click aqui e escolha seus Jogos (Máx. 15!)
+                    Click aqui e escolha seus Jogos (<span id="gameCountDisplay">0</span>/<span id="maxGameLimit">15</span>!)
                 </summary>
                 <div id="gameSelection" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex items-center">
@@ -240,23 +241,27 @@
                 </div>
             </details>
 
+            <!-- Botão de Ver Localização da Loja -->
+            <button type="button" id="viewStoreLocationBtn"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 mb-4">
+                Ver Localização da Loja
+            </button>
+
+
             <!-- Botão de Enviar -->
             <button type="submit" id="enviarWhatsapp"
                 class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105">
                 Enviar para WhatsApp
             </button>
 
-            <!--Mensagens de Feedback/Erro-->
+            <!-- Mensagens de Feedback/Erro -->
             <div id="messageBox" class="mt-4 p-3 rounded-lg text-center hidden"></div>
 
         </form>
     </div>
 
-    <!-- Importa o módulo de banco de dados do Supabase -->
     <script type="module" src="js/supabase_db.js"></script>
-    <!-- Link para o arquivo JavaScript de lógica da UI -->
     <script src="js/script.js" type="module"></script>
-    <!-- Inclui Tailwind CSS para estilos -->
     <script src="https://cdn.tailwindcss.com"></script>
 </body>
 
