@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     whatsappNumber: "5592993312208", // ALtere para o seu número de WhatsApp!
     storeLocation: {
       latitude: -3.029107355187607, // SUBSTITUA PELA LATITUDE REAL DA SUA LOJA.
+
       longitude: -60.00610662152138, // SUBSTITUA PELA LONGITUDE REAL DA SUA LOJA.
     },
   };

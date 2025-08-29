@@ -1,276 +1,568 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Configurações Xbox 360</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap"
+      rel="stylesheet"
+    />
     <!-- Font Awesome CDN para ícones (mantido para outros ícones se houver, ou pode ser removido se não for mais usado) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
 
-<body class="bg-gray-900 text-gray-100 font-sans">
+  <body class="bg-gray-900 text-gray-100 font-sans">
     <div class="container mx-auto p-4 sm:p-6 md:p-8">
-        <header class="text-center mb-8">
-            <img src="img/logo.png" alt="Sua Logo" class="mx-auto mb-4 w-32 h-auto rounded-full shadow-md"
-                width="128" height="128" loading="lazy"
-                onerror="this.onerror=null;this.src='https://placehold.co/128x128/34D399/FFFFFF?text=Logo';">
-            <h1 class="text-4xl font-bold text-green-500 mb-2">Formulário Da Hora Games</h1>
-            <p class="text-gray-300">Preencha os detalhes para desbloquear seu Xbox 360 e enviar para o WhatsApp.</p>
-        </header>
+      <header class="text-center mb-8">
+        <img
+          src="img/logo.png"
+          alt="Sua Logo"
+          class="mx-auto mb-4 w-32 h-auto rounded-full shadow-md"
+          width="128"
+          height="128"
+          loading="lazy"
+          onerror="this.onerror=null;this.src='https://placehold.co/128x128/34D399/FFFFFF?text=Logo';"
+        />
+        <h1 class="text-4xl font-bold text-green-500 mb-2">
+          Formulário Da Hora Games
+        </h1>
+        <p class="text-gray-300">
+          Preencha os detalhes para desbloquear seu Xbox 360 e enviar para o
+          WhatsApp.
+        </p>
+      </header>
 
-        <form id="xboxConfigForm" class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg">
-            <h3 class="text-2xl font-semibold text-green-400 mb-4">Informações Pessoais</h3>
-            <div class="mb-4">
-                <label for="nome" class="block text-gray-300 text-sm font-bold mb-2">Nome e Sobrenome:</label>
-                <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
-                <div id="error-nome" class="text-red-400 text-sm mt-1 hidden"></div>
-            </div>
-            <div class="mb-4">
-                <label for="telefone" class="block text-gray-300 text-sm font-bold mb-2">Telefone (com DDD):</label>
-                <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
-                <div id="error-telefone" class="text-red-400 text-sm mt-1 hidden"></div>
-            </div>
-            <div class="mb-4">
-                <label for="email" class="block text-gray-300 text-sm font-bold mb-2">Email:</label>
-                <input type="email" id="email" name="email" placeholder="seu.email@exemplo.com" required
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
-                <div id="error-email" class="text-red-400 text-sm mt-1 hidden"></div>
-            </div>
-            <div class="mb-6">
-                <label for="endereco" class="block text-gray-300 text-sm font-bold mb-2">Endereço:</label>
-                <input type="text" id="endereco" name="endereco" placeholder="Rua, Número - Bairro" required
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
-                <div id="error-endereco" class="text-red-400 text-sm mt-1 hidden"></div>
-            </div>
+      <form
+        id="xboxConfigForm"
+        class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg"
+      >
+        <h3 class="text-2xl font-semibold text-green-400 mb-4">
+          Informações Pessoais
+        </h3>
+        <div class="mb-4">
+          <label for="nome" class="block text-gray-300 text-sm font-bold mb-2"
+            >Nome e Sobrenome:</label
+          >
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Seu nome completo"
+            required
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out"
+          />
+          <div id="error-nome" class="text-red-400 text-sm mt-1 hidden"></div>
+        </div>
+        <div class="mb-4">
+          <label
+            for="telefone"
+            class="block text-gray-300 text-sm font-bold mb-2"
+            >Telefone (com DDD):</label
+          >
+          <input
+            type="tel"
+            id="telefone"
+            name="telefone"
+            placeholder="(XX) XXXXX-XXXX"
+            required
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out"
+          />
+          <div
+            id="error-telefone"
+            class="text-red-400 text-sm mt-1 hidden"
+          ></div>
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-gray-300 text-sm font-bold mb-2"
+            >Email:</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="seu.email@exemplo.com"
+            required
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out"
+          />
+          <div id="error-email" class="text-red-400 text-sm mt-1 hidden"></div>
+        </div>
+        <div class="mb-6">
+          <label
+            for="endereco"
+            class="block text-gray-300 text-sm font-bold mb-2"
+            >Endereço:</label
+          >
+          <input
+            type="text"
+            id="endereco"
+            name="endereco"
+            placeholder="Rua, Número - Bairro"
+            required
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out"
+          />
+          <div
+            id="error-endereco"
+            class="text-red-400 text-sm mt-1 hidden"
+          ></div>
+        </div>
 
-            <h3 class="text-2xl font-semibold text-green-400 mb-4">Detalhes do Xbox</h3>
-            <div class="mb-4">
-                <label for="modeloXbox" class="block text-gray-300 text-sm font-bold mb-2">Modelo do Xbox 360:</label>
-                <select id="modeloXbox" name="modeloXbox" required
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
-                    <option value="">Selecione o modelo</option>
-                    <option value="fat">Fat</option>
-                    <option value="slim">Slim</option>
-                    <option value="super-slim">Super Slim</option>
-                </select>
-                <div id="error-modeloXbox" class="text-red-400 text-sm mt-1 hidden"></div>
-            </div>
-            <div class="mb-6 relative">
-                <div class="flex items-center mb-2">
-                    <label for="anoXbox" class="block text-gray-300 text-sm font-bold mr-2 anoXbox">Ano do Xbox:</label>
-                    <button type="button" id="ondeEncontrarBtn"
-                        class="onde-encontrar bg-gray-600 hover:bg-gray-700 text-gray-200 text-xs font-bold py-1 px-2 rounded-md transition duration-300 ease-in-out">
-                        Onde Encontrar?
-                    </button>
-                </div>
-                <div id="yearHelpMessage" class="bg-gray-700 text-gray-200 text-sm p-2 rounded-md mt-1 hidden w-max max-w-xs sm:max-w-md shadow-lg text-center">
-                    Verificar a etiqueta atrás do aparelho.
-                </div>
-                <select id="anoXbox" name="anoXbox" required
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out">
-                    <option value="">Selecione o ano</option>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const anoXboxSelect = document.getElementById('anoXbox');
-                            for (let year = 2007; year <= 2015; year++) {
-                                const option = document.createElement('option');
-                                option.value = year;
-                                option.textContent = year;
-                                anoXboxSelect.appendChild(option);
-                            }
-                        });
-                    </script>
-                </select>
-                <div id="error-anoXbox" class="text-red-400 text-sm mt-1 hidden"></div>
-            </div>
-
-            <h3 class="text-1xl font-semibold text-green-400 mb-4">Opções de Armazenamento (HD, SSD, Pendrive)</h3>
-            <div class="mb-6">
-                <div class="flex items-center mb-2">
-                    <input type="radio" id="hdInterno" name="tipoHd" value="HD Interno"
-                        class="mr-2 form-radio text-green-500">
-                    <label for="hdInterno" class="text-gray-300">HD Interno</label>
-                </div>
-                <div class="flex items-center mb-2">
-                    <input type="radio" id="hdExterno" name="tipoHd" value="HD Externo"
-                        class="mr-2 form-radio text-green-500">
-                    <label for="hdExterno" class="text-gray-300">HD Externo</label>
-                </div>
-                <div class="flex items-center mb-2">
-                    <input type="radio" id="pendrive" name="tipoHd" value="Pendrive de 16GB ou mais"
-                        class="mr-2 form-radio text-green-500">
-                    <label for="pendrive" class="text-gray-300">Pendrive de 16GB ou mais</label>
-                </div>
-                <div id="error-tipoHd" class="text-red-400 text-sm mt-1 hidden"></div>
-                <p id="hdWarning" class="text-red-400 text-sm mt-2 hidden">Atenção: Sem HD, não será possível copiar
-                    jogos!</p>
-            </div>
-
-            <details id="gameSelectionDetails" class="mb-6">
-                <summary class="text-1xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out">
-                    Click aqui e escolha seus Jogos (<span id="gameCountDisplay">0</span>/<span id="maxGameLimit">15</span>!)
-                </summary>
-                <div id="gameSelection" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="assassinsCreedII" name="jogos" value="Assassins Creeds II"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="assassinsCreedII" class="text-gray-300">Assassins Creeds II</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="angryBirdsTrilogy" name="jogos" value="Angry Birds Trilogy"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="angryBirdsTrilogy" class="text-gray-300">Angry Birds Trilogy</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="forzaHorizon" name="jogos" value="Forza Horizon"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="forzaHorizon" class="text-gray-300">Forza Horizon</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="brazucas23" name="jogos" value="Brazucas 23 (PES 2013)"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="brazucas23" class="text-gray-300">Brazucas 23 (PES 2013)</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="codAdvancedWarfare" name="jogos"
-                            value="Call of Duty Advanced Warfare" class="mr-2 form-checkbox text-green-500">
-                        <label for="codAdvancedWarfare" class="text-gray-300">Call of Duty Advanced Warfare</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="codII" name="jogos" value="Call of Duty II"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="codII" class="text-gray-300">Call of Duty II</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="codBlackOPSII" name="jogos" value="Call of Duty Black OPS II"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="codBlackOPSII" class="text-gray-300">Call of Duty Black OPS II</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="codGhosts" name="jogos" value="Call of Duty Ghosts"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="codGhosts" class="text-gray-300">Call of Duty Ghosts</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="crysisII" name="jogos" value="Crysis II"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="crysisII" class="text-gray-300">Crysis II</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="dantesInferno" name="jogos" value="Dantes Inferno"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="dantesInferno" class="text-gray-300">Dantes Inferno</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="disneyUniverse" name="jogos" value="Disney Universe"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="disneyUniverse" class="text-gray-300">Disney Universe</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="farCry3" name="jogos" value="Far Cry 3"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="farCry3" class="text-gray-300">Far Cry 3</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="fifa19" name="jogos" value="FIFA 19"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="fifa19" class="text-gray-300">FIFA 19</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="gtaV" name="jogos" value="GTA V"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="gtaV" class="text-gray-300">GTA V</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="halo4" name="jogos" value="Halo 4"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="halo4" class="text-gray-300">Halo 4</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="metalSlugIII" name="jogos" value="Metal Slug III"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="metalSlugIII" class="text-gray-300">Metal Slug III</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="metalSlugX" name="jogos" value="Metal Slug X"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="metalSlugX" class="text-gray-300">Metal Slug X</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="metro2033" name="jogos" value="Metro 2033"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="metro2033" class="text-gray-300">Metro 2033</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="mortalKombat" name="jogos" value="Mortal Kombat"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="mortalKombat" class="text-gray-300">Mortal Kombat</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="nfsMostWanted" name="jogos" value="NFS Most Wanted"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="nfsMostWanted" class="text-gray-300">NFS Most Wanted</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="pacman" name="jogos" value="Pacman"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="pacman" class="text-gray-300">Pacman</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="pes2018" name="jogos" value="PES 2018"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="pes2018" class="text-gray-300">PES 2018</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="residentEvil4" name="jogos" value="Residente Evil 4"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="residentEvil4" class="text-gray-300">Residente Evil 4</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="sonicSegaAllStar" name="jogos" value="Sonic & Sega All Star"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="sonicSegaAllStar" class="text-gray-300">Sonic & Sega All Star</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="superStreetFight4" name="jogos" value="Super Street Fight 4"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="superStreetFight4" class="text-gray-300">Super Street Fight 4</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="spiderMan4" name="jogos" value="Spider Man 4"
-                            class="mr-2 form-checkbox text-green-500">
-                        <label for="spiderMan4" class="text-gray-300">Spider Man 4</label>
-                    </div>
-                    <p id="gameLimitWarning" class="text-red-400 text-sm mt-2 hidden col-span-full">Você só pode
-                        escolher no máximo 15 jogos.</p>
-                </div>
-            </details>
-
-            <button type="button" id="viewStoreLocationBtn"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 mb-4">
-                Ver Localização da Loja
+        <h3 class="text-2xl font-semibold text-green-400 mb-4">
+          Detalhes do Xbox
+        </h3>
+        <div class="mb-4">
+          <label
+            for="modeloXbox"
+            class="block text-gray-300 text-sm font-bold mb-2"
+            >Modelo do Xbox 360:</label
+          >
+          <select
+            id="modeloXbox"
+            name="modeloXbox"
+            required
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out"
+          >
+            <option value="">Selecione o modelo</option>
+            <option value="fat">Fat</option>
+            <option value="slim">Slim</option>
+            <option value="super-slim">Super Slim</option>
+          </select>
+          <div
+            id="error-modeloXbox"
+            class="text-red-400 text-sm mt-1 hidden"
+          ></div>
+        </div>
+        <div class="mb-6 relative">
+          <div class="flex items-center mb-2">
+            <label
+              for="anoXbox"
+              class="block text-gray-300 text-sm font-bold mr-2 anoXbox"
+              >Ano do Xbox:</label
+            >
+            <button
+              type="button"
+              id="ondeEncontrarBtn"
+              class="onde-encontrar bg-gray-600 hover:bg-gray-700 text-gray-200 text-xs font-bold py-1 px-2 rounded-md transition duration-300 ease-in-out"
+            >
+              Onde Encontrar?
             </button>
+          </div>
+          <div
+            id="yearHelpMessage"
+            class="bg-gray-700 text-gray-200 text-sm p-2 rounded-md mt-1 hidden w-max max-w-xs sm:max-w-md shadow-lg text-center"
+          >
+            Verificar a etiqueta atrás do aparelho.
+          </div>
+          <select
+            id="anoXbox"
+            name="anoXbox"
+            required
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-300 ease-in-out"
+          >
+            <option value="">Selecione o ano</option>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                const anoXboxSelect = document.getElementById("anoXbox");
+                for (let year = 2007; year <= 2015; year++) {
+                  const option = document.createElement("option");
+                  option.value = year;
+                  option.textContent = year;
+                  anoXboxSelect.appendChild(option);
+                }
+              });
+            </script>
+          </select>
+          <div
+            id="error-anoXbox"
+            class="text-red-400 text-sm mt-1 hidden"
+          ></div>
+        </div>
 
+        <h3 class="text-1xl font-semibold text-green-400 mb-4">
+          Opções de Armazenamento (HD, SSD, Pendrive)
+        </h3>
+        <div class="mb-6">
+          <div class="flex items-center mb-2">
+            <input
+              type="radio"
+              id="hdInterno"
+              name="tipoHd"
+              value="HD Interno"
+              class="mr-2 form-radio text-green-500"
+            />
+            <label for="hdInterno" class="text-gray-300">HD Interno</label>
+          </div>
+          <div class="flex items-center mb-2">
+            <input
+              type="radio"
+              id="hdExterno"
+              name="tipoHd"
+              value="HD Externo"
+              class="mr-2 form-radio text-green-500"
+            />
+            <label for="hdExterno" class="text-gray-300">HD Externo</label>
+          </div>
+          <div class="flex items-center mb-2">
+            <input
+              type="radio"
+              id="pendrive"
+              name="tipoHd"
+              value="Pendrive de 16GB ou mais"
+              class="mr-2 form-radio text-green-500"
+            />
+            <label for="pendrive" class="text-gray-300"
+              >Pendrive de 16GB ou mais</label
+            >
+          </div>
+          <div id="error-tipoHd" class="text-red-400 text-sm mt-1 hidden"></div>
+          <p id="hdWarning" class="text-red-400 text-sm mt-2 hidden">
+            Atenção: Sem HD, não será possível copiar jogos!
+          </p>
+        </div>
 
-            <button type="submit" id="enviarWhatsapp"
-                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105">
-                Enviar para WhatsApp
-            </button>
+        <details id="gameSelectionDetails" class="mb-6">
+          <summary
+            class="text-1xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out"
+          >
+            Click aqui e escolha seus Jogos (<span id="gameCountDisplay">0</span
+            >/<span id="maxGameLimit">15</span>!)
+          </summary>
+          <div
+            id="gameSelection"
+            class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+          >
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="assassinsCreedII"
+                name="jogos"
+                value="Assassins Creeds II"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="assassinsCreedII" class="text-gray-300"
+                >Assassins Creeds II</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="angryBirdsTrilogy"
+                name="jogos"
+                value="Angry Birds Trilogy"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="angryBirdsTrilogy" class="text-gray-300"
+                >Angry Birds Trilogy</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="forzaHorizon"
+                name="jogos"
+                value="Forza Horizon"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="forzaHorizon" class="text-gray-300"
+                >Forza Horizon</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="brazucas23"
+                name="jogos"
+                value="Brazucas 23 (PES 2013)"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="brazucas23" class="text-gray-300"
+                >Brazucas 23 (PES 2013)</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="codAdvancedWarfare"
+                name="jogos"
+                value="Call of Duty Advanced Warfare"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="codAdvancedWarfare" class="text-gray-300"
+                >Call of Duty Advanced Warfare</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="codII"
+                name="jogos"
+                value="Call of Duty II"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="codII" class="text-gray-300">Call of Duty II</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="codBlackOPSII"
+                name="jogos"
+                value="Call of Duty Black OPS II"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="codBlackOPSII" class="text-gray-300"
+                >Call of Duty Black OPS II</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="codGhosts"
+                name="jogos"
+                value="Call of Duty Ghosts"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="codGhosts" class="text-gray-300"
+                >Call of Duty Ghosts</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="crysisII"
+                name="jogos"
+                value="Crysis II"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="crysisII" class="text-gray-300">Crysis II</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="dantesInferno"
+                name="jogos"
+                value="Dantes Inferno"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="dantesInferno" class="text-gray-300"
+                >Dantes Inferno</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="disneyUniverse"
+                name="jogos"
+                value="Disney Universe"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="disneyUniverse" class="text-gray-300"
+                >Disney Universe</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="farCry3"
+                name="jogos"
+                value="Far Cry 3"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="farCry3" class="text-gray-300">Far Cry 3</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="fifa19"
+                name="jogos"
+                value="FIFA 19"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="fifa19" class="text-gray-300">FIFA 19</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="gtaV"
+                name="jogos"
+                value="GTA V"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="gtaV" class="text-gray-300">GTA V</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="halo4"
+                name="jogos"
+                value="Halo 4"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="halo4" class="text-gray-300">Halo 4</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="metalSlugIII"
+                name="jogos"
+                value="Metal Slug III"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="metalSlugIII" class="text-gray-300"
+                >Metal Slug III</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="metalSlugX"
+                name="jogos"
+                value="Metal Slug X"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="metalSlugX" class="text-gray-300">Metal Slug X</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="metro2033"
+                name="jogos"
+                value="Metro 2033"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="metro2033" class="text-gray-300">Metro 2033</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="mortalKombat"
+                name="jogos"
+                value="Mortal Kombat"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="mortalKombat" class="text-gray-300"
+                >Mortal Kombat</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="nfsMostWanted"
+                name="jogos"
+                value="NFS Most Wanted"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="nfsMostWanted" class="text-gray-300"
+                >NFS Most Wanted</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="pacman"
+                name="jogos"
+                value="Pacman"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="pacman" class="text-gray-300">Pacman</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="pes2018"
+                name="jogos"
+                value="PES 2018"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="pes2018" class="text-gray-300">PES 2018</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="residentEvil4"
+                name="jogos"
+                value="Residente Evil 4"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="residentEvil4" class="text-gray-300"
+                >Residente Evil 4</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="sonicSegaAllStar"
+                name="jogos"
+                value="Sonic & Sega All Star"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="sonicSegaAllStar" class="text-gray-300"
+                >Sonic & Sega All Star</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="superStreetFight4"
+                name="jogos"
+                value="Super Street Fight 4"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="superStreetFight4" class="text-gray-300"
+                >Super Street Fight 4</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="spiderMan4"
+                name="jogos"
+                value="Spider Man 4"
+                class="mr-2 form-checkbox text-green-500"
+              />
+              <label for="spiderMan4" class="text-gray-300">Spider Man 4</label>
+            </div>
+            <p
+              id="gameLimitWarning"
+              class="text-red-400 text-sm mt-2 hidden col-span-full"
+            >
+              Você só pode escolher no máximo 15 jogos.
+            </p>
+          </div>
+        </details>
 
-            <div id="messageBox" class="mt-4 p-3 rounded-lg text-center hidden"></div>
+        <button
+          type="button"
+          id="viewStoreLocationBtn"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 mb-4"
+        >
+          Ver Localização da Loja
+        </button>
 
-        </form>
+        <button
+          type="submit"
+          id="enviarWhatsapp"
+          class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          Enviar para WhatsApp
+        </button>
+
+        <div
+          id="messageBox"
+          class="mt-4 p-3 rounded-lg text-center hidden"
+        ></div>
+      </form>
     </div>
 
     <script type="module" src="js/supabase_db.js"></script>
     <script src="js/script.js" type="module"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-</body>
-
+  </body>
 </html>
