@@ -14,10 +14,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   const config = {
     maxGamesSelection: 15,
     whatsappNumber: "5592993312208", // ALtere para o seu número de WhatsApp!
-    storeLocation: {
-      latitude: -3.1071, // SUBSTITUA PELA LATITUDE REAL DA SUA LOJA.
-      longitude: -60.0261, // SUBSTITUA PELA LONGITUDE REAL DA SUA LOJA.
-    },
+    // Removidas latitude e longitude. Usar a URL direta abaixo.
+    storeLocationUrl: "https://maps.app.goo.gl/9BWP7ztqomQJdKP57", // SUBSTITUA PELA URL REAL DA SUA LOJA NO GOOGLE MAPS!
     instagramUrl:
       "https://www.instagram.com/dahora_games?igsh=NDZqMW5tYTVsOHR1", // SUBSTITUA PELA SUA URL DO INSTAGRAM
   };
@@ -64,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const enviarWhatsappBtn = document.getElementById("enviarWhatsapp");
   const viewStoreLocationBtn = document.getElementById("viewStoreLocationBtn");
   const ondeEncontrarBtn = document.getElementById("ondeEncontrarBtn");
-  const instagramBtn = document.getElementById("instagramBtn"); // Novo elemento
+  const instagramBtn = document.getElementById("instagramBtn");
   const yearHelpMessage = document.getElementById("yearHelpMessage");
   const telefoneInput = document.getElementById("telefone");
   const emailInput = document.getElementById("email");
@@ -356,8 +354,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     const originalText = viewStoreLocationBtn.textContent;
     viewStoreLocationBtn.textContent = MESSAGES.OPENING_MAP_TEXT;
 
-    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${config.storeLocation.latitude},${config.storeLocation.longitude}`;
-    window.open(googleMapsUrl, "_blank");
+    // Agora abre a URL direta
+    window.open(config.storeLocationUrl, "_blank");
 
     setTimeout(() => {
       viewStoreLocationBtn.textContent = originalText;
@@ -372,7 +370,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fechar a mensagem de ajuda se clicar fora dela
   document.addEventListener("click", (event) => {
-    // Verifica se o clique não foi na mensagem de ajuda ou no gatilho do botão "Onde Encontrar?"
     if (
       !yearHelpMessage.classList.contains(CSS_CLASSES.HIDDEN) &&
       !yearHelpMessage.contains(event.target) &&
@@ -458,7 +455,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
       const nome = document.getElementById("nome").value.trim();
       const telefone = telefoneInput.value.trim();
-      const email = emailInput.value.trim();
+      const email = document.getElementById("email").value.trim();
       const endereco = document.getElementById("endereco").value.trim();
       const modeloXbox = document.getElementById("modeloXbox").value;
       const anoXbox = document.getElementById("anoXbox").value;
