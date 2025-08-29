@@ -45,9 +45,9 @@
         id="xboxConfigForm"
         class="bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg"
       >
-        <h3 class="text-2xl font-semibold text-green-400 mb-4">
+        <h2 class="text-2xl font-semibold text-green-400 mb-4">
           Informações Pessoais
-        </h3>
+        </h2>
         <div class="mb-4">
           <label for="nome" class="block text-gray-300 text-sm font-bold mb-2"
             >Nome e Sobrenome:</label
@@ -115,9 +115,9 @@
           ></div>
         </div>
 
-        <h3 class="text-2xl font-semibold text-green-400 mb-4">
+        <h2 class="text-2xl font-semibold text-green-400 mb-4">
           Detalhes do Xbox
-        </h3>
+        </h2>
         <div class="mb-4">
           <label
             for="modeloXbox"
@@ -144,13 +144,13 @@
           <div class="flex items-center mb-2">
             <label
               for="anoXbox"
-              class="block text-gray-300 text-sm font-bold mr-2 anoXbox"
+              class="block text-gray-300 text-sm font-bold mr-2"
               >Ano do Xbox:</label
             >
             <button
               type="button"
               id="ondeEncontrarBtn"
-              class="onde-encontrar bg-gray-600 hover:bg-gray-700 text-gray-200 text-xs font-bold py-1 px-2 rounded-md transition duration-300 ease-in-out"
+              class="bg-gray-600 hover:bg-gray-700 text-gray-200 text-xs font-bold py-1 px-2 rounded-md transition duration-300 ease-in-out"
             >
               Onde Encontrar?
             </button>
@@ -186,9 +186,9 @@
           ></div>
         </div>
 
-        <h3 class="text-1xl font-semibold text-green-400 mb-4">
-          Opções de Armazenamento (HD, SSD, Pendrive)
-        </h3>
+        <h2 class="text-2xl font-semibold text-green-400 mb-4">
+          Opções de Armazenamento (HD)
+        </h2>
         <div class="mb-6">
           <div class="flex items-center mb-2">
             <input
@@ -215,11 +215,11 @@
               type="radio"
               id="pendrive"
               name="tipoHd"
-              value="Pendrive de 16GB ou mais"
+              value="Pendrive de 16GB+"
               class="mr-2 form-radio text-green-500"
             />
             <label for="pendrive" class="text-gray-300"
-              >Pendrive de 16GB ou mais</label
+              >Pendrive de 16GB+</label
             >
           </div>
           <div id="error-tipoHd" class="text-red-400 text-sm mt-1 hidden"></div>
@@ -230,10 +230,10 @@
 
         <details id="gameSelectionDetails" class="mb-6">
           <summary
-            class="text-1xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out"
+            class="text-2xl font-semibold text-green-400 cursor-pointer mb-4 pb-2 border-b border-gray-600 hover:text-green-300 transition duration-300 ease-in-out"
           >
-            Click aqui e escolha seus Jogos (<span id="gameCountDisplay">0</span
-            >/<span id="maxGameLimit">15</span>!)
+            Click e escolha seus Jogos (<span id="gameCountDisplay">0</span
+            >/<span id="maxGameLimit">15</span>)
           </summary>
           <div
             id="gameSelection"
@@ -537,6 +537,15 @@
             </p>
           </div>
         </details>
+
+        <!-- Novo botão "Nosso Instagram" -->
+        <button
+          type="button"
+          id="instagramBtn"
+          class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 mb-4"
+        >
+          Nosso Instagram
+        </button>
 
         <button
           type="button"

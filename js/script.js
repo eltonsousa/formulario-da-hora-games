@@ -15,10 +15,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     maxGamesSelection: 15,
     whatsappNumber: "5592993312208", // ALtere para o seu número de WhatsApp!
     storeLocation: {
-      latitude: -3.029107355187607, // SUBSTITUA PELA LATITUDE REAL DA SUA LOJA.
-
-      longitude: -60.00610662152138, // SUBSTITUA PELA LONGITUDE REAL DA SUA LOJA.
+      latitude: -3.1071, // SUBSTITUA PELA LATITUDE REAL DA SUA LOJA.
+      longitude: -60.0261, // SUBSTITUA PELA LONGITUDE REAL DA SUA LOJA.
     },
+    instagramUrl:
+      "https://www.instagram.com/dahora_games?igsh=NDZqMW5tYTVsOHR1", // SUBSTITUA PELA SUA URL DO INSTAGRAM
   };
 
   const MESSAGES = {
@@ -62,8 +63,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("xboxConfigForm");
   const enviarWhatsappBtn = document.getElementById("enviarWhatsapp");
   const viewStoreLocationBtn = document.getElementById("viewStoreLocationBtn");
-  const ondeEncontrarBtn = document.getElementById("ondeEncontrarBtn"); // Novo elemento
-  const yearHelpMessage = document.getElementById("yearHelpMessage"); // Elemento de mensagem de ajuda
+  const ondeEncontrarBtn = document.getElementById("ondeEncontrarBtn");
+  const instagramBtn = document.getElementById("instagramBtn"); // Novo elemento
+  const yearHelpMessage = document.getElementById("yearHelpMessage");
   const telefoneInput = document.getElementById("telefone");
   const emailInput = document.getElementById("email");
   const hdInternoRadio = document.getElementById("hdInterno");
@@ -380,6 +382,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
+  // --- Lógica para o botão "Nosso Instagram" ---
+  instagramBtn.addEventListener("click", () => {
+    window.open(config.instagramUrl, "_blank");
+  });
+
   handleHdSelection();
   updateGameCountDisplay();
 
@@ -392,7 +399,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   emailInput.addEventListener("blur", validateEmail);
   document
     .getElementById("endereco")
-    .addEventListener("blur", () => validateEndereco()); // Usa a referência correta do input
+    .addEventListener("blur", () => validateEndereco());
   document
     .getElementById("modeloXbox")
     .addEventListener("change", validateModeloXbox);
