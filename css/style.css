@@ -178,7 +178,7 @@ button[type="submit"] {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    /*margin-top: 1rem;*/
+    margin-bottom: 1rem;
     width: 100%;
 }
 
