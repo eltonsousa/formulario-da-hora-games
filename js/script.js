@@ -717,9 +717,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         setFormLoadingState(true); // Ativa o estado de carregamento somente após a confirmação
 
         try {
-          // Gera a ID do serviço única
           const serviceId = `OS-${uuid.v4().substring(0, 8).toUpperCase()}`;
-
           const nome = document.getElementById("nome").value.trim();
           const telefone = telefoneInput.value.trim();
           const email = document.getElementById("email").value.trim();
@@ -750,10 +748,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
           });
 
-          // Chama a nova função para obter o valor final
+          // Define o tipo de serviço antes de criar o objeto
+          let tipoServico = "";
+          if (desbloqueadoOunao === "Desbloqueado" || anoXbox === "2015") {
+            tipoServico = "Somente Jogos";
+          } else if (desbloqueadoOunao === "Bloqueado") {
+            tipoServico = "Desbloqueio + Jogos";
+          }
+
           const valorFinal = calculateFinalPrice();
 
-          // banco de dados Supabase
           const configToSave = {
             service_id: serviceId,
             nome,
@@ -764,8 +768,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             desbloqueadoOunao,
             anoXbox: parseInt(anoXbox),
             tipoHd,
-            tipo_servico: tipoServico,
             jogosSelecionados,
+            tipo_servico: tipoServico, // LINHA AGORA ESTÁ CORRETA
           };
 
           const { data, error } = await saveXboxConfig(configToSave);
@@ -782,15 +786,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
           }
 
-          let tipoServico = "";
-          if (desbloqueadoOunao === "Desbloqueado" || anoXbox === "2015") {
-            tipoServico = "Somente Jogos";
-          } else if (desbloqueadoOunao === "Bloqueado") {
-            tipoServico = "Desbloqueio + Jogos";
-          }
-
           let whatsappMessage = `*Orçamento/Desbloqueio Xbox 360*\n`;
-          whatsappMessage += `*ID do Serviço: ${serviceId}*\n\n`; // Adicionado
+          whatsappMessage += `*ID do Serviço: ${serviceId}*\n\n`;
           whatsappMessage += `*Informações Pessoais:*\n`;
           whatsappMessage += `Nome: ${nome}\n`;
           whatsappMessage += `Telefone: ${telefone}\n`;
