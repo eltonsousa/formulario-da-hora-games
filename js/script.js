@@ -12,12 +12,21 @@ const { initialize: initializeSupabase, saveXboxConfig } = window.supabaseDb;
 document.addEventListener("DOMContentLoaded", async function () {
   // --- Objeto de Configuração Centralizado ---
   const config = {
-    maxGamesSelection: 15,
     whatsappNumber: "5592993312208", // ALtere para o seu número de WhatsApp!
     // Removidas latitude e longitude. Usar a URL direta abaixo.
     storeLocationUrl: "https://maps.app.goo.gl/9BWP7ztqomQJdKP57", // SUBSTITUA PELA URL REAL DA SUA LOJA NO GOOGLE MAPS!
     instagramUrl:
       "https://www.instagram.com/dahora_games?igsh=NDZqMW5tYTVsOHR1", // SUBSTITUA PELA SUA URL DO INSTAGRAM
+  };
+
+  const GAME_LIMIT_BLOQUEADO = 15; // Nova constante para o limite de jogos
+
+  const PRICES = {
+    bloqueado: 150.0,
+    desbloqueado: {
+      10: 50.0,
+      20: 100.0,
+    },
   };
 
   const MESSAGES = {
@@ -29,6 +38,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       "Escolha pelo menos um jogo ou desmarque a opção de HD se não quiser copiar jogos.",
     GAME_LIMIT_EXCEEDED: (max) =>
       `Você só pode escolher no máximo ${max} jogos.`,
+    GAME_PACKAGE_REQUIRED: "Por favor, selecione um pacote de jogos.",
     GENERIC_ERROR: (msg) => `Erro inesperado: ${msg}`,
     DB_SAVE_ERROR: (msg) => `Erro ao salvar no banco de dados: ${msg}`,
     SENDING_WHATSAPP: "Enviando dados...", // Alterado para 'Enviando dados...'
@@ -84,6 +94,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   const messageBox = document.getElementById("messageBox");
   const gameCountDisplay = document.getElementById("gameCountDisplay");
   const maxGameLimit = document.getElementById("maxGameLimit");
+  const gameSelectionDetails = document.getElementById("gameSelectionDetails");
+  const gamePackagesSection = document.getElementById("gamePackagesSection");
+  const desbloqueadoRadio = document.getElementById("desbloqueado");
+  const bloqueadoRadio = document.getElementById("bloqueado");
+  const errorGamePackage = document.getElementById("error-gamePackage");
 
   // Referências aos elementos do modal de confirmação
   const confirmationModal = document.getElementById("confirmationModal");
@@ -230,12 +245,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   /**
    * Atualiza a contagem de jogos selecionados no display.
    */
-  function updateGameCountDisplay() {
+  function updateGameCountDisplay(maxGames) {
     const selectedGamesCount = document.querySelectorAll(
       'input[name="jogos"]:checked'
     ).length;
     gameCountDisplay.textContent = selectedGamesCount;
-    maxGameLimit.textContent = config.maxGamesSelection;
+    maxGameLimit.textContent = maxGames;
   }
 
   /**
@@ -331,9 +346,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   function validateTipoHd() {
     const anyHdSelected =
       hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
-    const radioGroupWrapper = document
-      .querySelector('input[name="tipoHd"]')
-      .closest("div.mb-6");
     if (!anyHdSelected) {
       showInlineError(errorTipoHd, null, MESSAGES.SELECT_HD_OPTION);
       return false;
@@ -342,17 +354,53 @@ document.addEventListener("DOMContentLoaded", async function () {
     return true;
   }
 
-  function validateGameSelection() {
-    let selectedGamesCount = document.querySelectorAll(
-      'input[name="jogos"]:checked'
-    ).length;
-    if (selectedGamesCount > config.maxGamesSelection) {
-      gameLimitWarning.classList.remove(CSS_CLASSES.HIDDEN);
-      return false;
-    } else {
-      gameLimitWarning.classList.add(CSS_CLASSES.HIDDEN);
+  function validateGamePackage() {
+    const desbloqueadoOunao = document.querySelector(
+      'input[name="desbloqueadoOunao"]:checked'
+    )?.value;
+    if (desbloqueadoOunao === "Desbloqueado") {
+      const selectedPackage = document.querySelector(
+        'input[name="gamePackage"]:checked'
+      );
+      if (!selectedPackage) {
+        showInlineError(errorGamePackage, null, MESSAGES.GAME_PACKAGE_REQUIRED);
+        return false;
+      }
+      showInlineError(errorGamePackage, null, "");
       return true;
     }
+    return true; // Não precisa de pacote se for bloqueado
+  }
+
+  function validateGameSelection() {
+    const desbloqueadoOunao = document.querySelector(
+      'input[name="desbloqueadoOunao"]:checked'
+    )?.value;
+    const selectedGamesCount = document.querySelectorAll(
+      'input[name="jogos"]:checked'
+    ).length;
+
+    if (desbloqueadoOunao === "Desbloqueado") {
+      const selectedPackage = document.querySelector(
+        'input[name="gamePackage"]:checked'
+      )?.value;
+      const maxGames = selectedPackage ? parseInt(selectedPackage) : 0;
+      if (selectedGamesCount > maxGames) {
+        gameLimitWarning.textContent = MESSAGES.GAME_LIMIT_EXCEEDED(maxGames);
+        gameLimitWarning.classList.remove(CSS_CLASSES.HIDDEN);
+        return false;
+      }
+    } else if (desbloqueadoOunao === "Bloqueado") {
+      if (selectedGamesCount > GAME_LIMIT_BLOQUEADO) {
+        gameLimitWarning.textContent =
+          MESSAGES.GAME_LIMIT_EXCEEDED(GAME_LIMIT_BLOQUEADO);
+        gameLimitWarning.classList.remove(CSS_CLASSES.HIDDEN);
+        return false;
+      }
+    }
+
+    gameLimitWarning.classList.add(CSS_CLASSES.HIDDEN);
+    return true;
   }
 
   /**
@@ -370,10 +418,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     isValid = validateModeloXbox() && isValid;
     isValid = validateAnoXbox() && isValid;
     isValid = validateTipoHd() && isValid;
-
-    if (!validateGameSelection()) {
-      isValid = false;
-    }
+    isValid = validateGamePackage() && isValid;
+    isValid = validateGameSelection() && isValid;
 
     const anyHdSelected =
       hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
@@ -390,7 +436,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     if (!isValid) {
-      // Foca no primeiro input inválido para melhor UX
       const firstInvalidInput = form.querySelector(".border-red-500");
       if (firstInvalidInput) {
         firstInvalidInput.focus();
@@ -449,6 +494,29 @@ document.addEventListener("DOMContentLoaded", async function () {
     onConfirmAction = null; // Limpa o callback
     setFormLoadingState(false); // Garante que o botão de envio esteja habilitado
   });
+
+  // --- Funções para controlar a visibilidade das opções de jogo ---
+  function handleConsoleTypeSelection() {
+    const isDesbloqueado = desbloqueadoRadio.checked;
+    gamePackagesSection.classList.toggle(CSS_CLASSES.HIDDEN, !isDesbloqueado);
+
+    // Reseta as seleções de jogos se o tipo de console mudar
+    gameCheckboxes.forEach((checkbox) => (checkbox.checked = false));
+    document
+      .querySelectorAll('input[name="gamePackage"]')
+      .forEach((radio) => (radio.checked = false));
+
+    if (isDesbloqueado) {
+      // Oculta a seção de jogos até um pacote ser selecionado
+      gameSelectionDetails.classList.add(CSS_CLASSES.HIDDEN);
+      maxGameLimit.textContent = "?"; // Exibe "?" até o pacote ser selecionado
+      gameCountDisplay.textContent = 0;
+    } else {
+      // Se for 'Bloqueado'
+      gameSelectionDetails.classList.remove(CSS_CLASSES.HIDDEN);
+      updateGameCountDisplay(GAME_LIMIT_BLOQUEADO);
+    }
+  }
 
   // --- Event Listeners ---
 
@@ -522,9 +590,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     }, 2000); // Atraso de 2 segundos
   });
 
+  // Eventos para radio buttons de tipo de console
+  desbloqueadoRadio.addEventListener("change", handleConsoleTypeSelection);
+  bloqueadoRadio.addEventListener("change", handleConsoleTypeSelection);
+
   // Inicializa a lógica de seleção de HD e contagem de jogos
   handleHdSelection();
-  updateGameCountDisplay();
+  handleConsoleTypeSelection();
 
   // Formatação do telefone ao digitar
   telefoneInput.addEventListener("input", function (event) {
@@ -546,6 +618,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     .addEventListener("change", validateAnoXbox);
   document.getElementById("anoXbox").addEventListener("blur", validateAnoXbox);
 
+  // Evento para os pacotes de jogos
+  document.querySelectorAll('input[name="gamePackage"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      gameSelectionDetails.classList.remove(CSS_CLASSES.HIDDEN);
+      const maxGames = radio.value;
+      updateGameCountDisplay(maxGames);
+      validateGameSelection();
+    });
+  });
+
   // Eventos para radio buttons de HD
   hdInternoRadio.addEventListener("change", handleHdSelection);
   hdExternoRadio.addEventListener("change", handleHdSelection);
@@ -555,7 +637,19 @@ document.addEventListener("DOMContentLoaded", async function () {
   gameCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
       validateGameSelection();
-      updateGameCountDisplay();
+      const desbloqueadoOunao = document.querySelector(
+        'input[name="desbloqueadoOunao"]:checked'
+      )?.value;
+      if (desbloqueadoOunao === "Desbloqueado") {
+        const selectedPackage = document.querySelector(
+          'input[name="gamePackage"]:checked'
+        )?.value;
+        if (selectedPackage) {
+          updateGameCountDisplay(selectedPackage);
+        }
+      } else {
+        updateGameCountDisplay(GAME_LIMIT_BLOQUEADO);
+      }
     });
   });
 
@@ -605,10 +699,12 @@ document.addEventListener("DOMContentLoaded", async function () {
           const modeloXbox = document.getElementById("modeloXbox").value;
           const anoXbox = document.getElementById("anoXbox").value;
 
-          // CAPTURA AQUI O VALOR DO RADIO BUTTON SELECIONADO
           const desbloqueadoOunao =
             document.querySelector('input[name="desbloqueadoOunao"]:checked')
               ?.value || "Não informado";
+          const gamePackage =
+            document.querySelector('input[name="gamePackage"]:checked')
+              ?.value || "N/A";
 
           let tipoHd = "";
           if (hdInternoRadio.checked) {
@@ -625,6 +721,17 @@ document.addEventListener("DOMContentLoaded", async function () {
               jogosSelecionados.push(checkbox.value);
             }
           });
+
+          let valorFinal = 0;
+          if (desbloqueadoOunao === "Bloqueado") {
+            valorFinal = PRICES.bloqueado;
+          } else if (desbloqueadoOunao === "Desbloqueado") {
+            if (gamePackage === "10") {
+              valorFinal = PRICES.desbloqueado["10"];
+            } else if (gamePackage === "20") {
+              valorFinal = PRICES.desbloqueado["20"];
+            }
+          }
 
           const configToSave = {
             nome,
@@ -665,6 +772,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           whatsappMessage += `Ano: ${anoXbox}\n`;
           whatsappMessage += `Armazenamento: ${tipoHd}\n\n`;
 
+          if (desbloqueadoOunao === "Desbloqueado" && gamePackage !== "N/A") {
+            whatsappMessage += `*Pacote de jogos: ${gamePackage} jogos*\n`;
+          }
+
           if (jogosSelecionados.length > 0) {
             whatsappMessage += `*Jogos Escolhidos:*\n`;
             jogosSelecionados.forEach((jogo) => {
@@ -680,6 +791,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             whatsappMessage += `\n*Aviso:* ${MESSAGES.XBOX_2015_WARNING}\n`;
           }
 
+          whatsappMessage += `\n*VALOR DO SERVIÇO: R$ ${valorFinal
+            .toFixed(2)
+            .replace(".", ",")}*\n`;
+
           whatsappMessage += `\n_Gerado via App Da Hora Games_`;
 
           const whatsappUrl = `https://api.whatsapp.com/send?phone=${
@@ -689,6 +804,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           window.open(whatsappUrl, "_system");
           form.reset();
           handleHdSelection();
+          handleConsoleTypeSelection();
           resetFormDirtyState();
 
           setFormLoadingState(false); // Desativa o estado de carregamento
