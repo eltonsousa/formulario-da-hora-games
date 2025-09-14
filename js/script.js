@@ -445,6 +445,31 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   /**
+   * Calcula o valor final do serviço com base nas seleções.
+   * @returns {number} O valor final do serviço.
+   */
+  function calculateFinalPrice() {
+    const desbloqueadoOunao = document.querySelector(
+      'input[name="desbloqueadoOunao"]:checked'
+    )?.value;
+    const gamePackage = document.querySelector(
+      'input[name="gamePackage"]:checked'
+    )?.value;
+
+    let valorFinal = 0;
+    if (desbloqueadoOunao === "Bloqueado") {
+      valorFinal = PRICES.bloqueado;
+    } else if (desbloqueadoOunao === "Desbloqueado") {
+      if (gamePackage === "10") {
+        valorFinal = PRICES.desbloqueado["10"];
+      } else if (gamePackage === "20") {
+        valorFinal = PRICES.desbloqueado["20"];
+      }
+    }
+    return valorFinal;
+  }
+
+  /**
    * Lida com a seleção de HD, habilitando/desabilitando a seleção de jogos.
    */
   function handleHdSelection() {
@@ -692,6 +717,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         setFormLoadingState(true); // Ativa o estado de carregamento somente após a confirmação
 
         try {
+          // Gera a ID do serviço única
+          const serviceId = `OS-${uuid.v4().substring(0, 8).toUpperCase()}`;
+
           const nome = document.getElementById("nome").value.trim();
           const telefone = telefoneInput.value.trim();
           const email = document.getElementById("email").value.trim();
@@ -722,18 +750,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
           });
 
-          let valorFinal = 0;
-          if (desbloqueadoOunao === "Bloqueado") {
-            valorFinal = PRICES.bloqueado;
-          } else if (desbloqueadoOunao === "Desbloqueado") {
-            if (gamePackage === "10") {
-              valorFinal = PRICES.desbloqueado["10"];
-            } else if (gamePackage === "20") {
-              valorFinal = PRICES.desbloqueado["20"];
-            }
-          }
+          // Chama a nova função para obter o valor final
+          const valorFinal = calculateFinalPrice();
 
           const configToSave = {
+            service_id: serviceId, // Adicionado
             nome,
             telefone,
             email,
@@ -766,7 +787,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             tipoServico = "Desbloqueio + Jogos";
           }
 
-          let whatsappMessage = `*Orçamento/Desbloqueio Xbox 360*\n\n`;
+          let whatsappMessage = `*Orçamento/Desbloqueio Xbox 360*\n`;
+          whatsappMessage += `*ID do Serviço: ${serviceId}*\n\n`; // Adicionado
           whatsappMessage += `*Informações Pessoais:*\n`;
           whatsappMessage += `Nome: ${nome}\n`;
           whatsappMessage += `Telefone: ${telefone}\n`;
