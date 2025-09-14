@@ -759,6 +759,13 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
           }
 
+          let tipoServico = "";
+          if (desbloqueadoOunao === "Desbloqueado" || anoXbox === "2015") {
+            tipoServico = "Somente Jogos";
+          } else if (desbloqueadoOunao === "Bloqueado") {
+            tipoServico = "Desbloqueio + Jogos";
+          }
+
           let whatsappMessage = `*Orçamento/Desbloqueio Xbox 360*\n\n`;
           whatsappMessage += `*Informações Pessoais:*\n`;
           whatsappMessage += `Nome: ${nome}\n`;
@@ -770,7 +777,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           whatsappMessage += `Modelo: ${modeloXbox.toUpperCase()}\n`;
           whatsappMessage += `Estado Console: ${desbloqueadoOunao}\n`;
           whatsappMessage += `Ano: ${anoXbox}\n`;
-          whatsappMessage += `Armazenamento: ${tipoHd}\n\n`;
+          whatsappMessage += `Armazenamento: ${tipoHd}\n`;
+
+          if (tipoServico) {
+            whatsappMessage += `Tipo Serviço: ${tipoServico}\n\n`;
+          }
 
           if (desbloqueadoOunao === "Desbloqueado" && gamePackage !== "N/A") {
             whatsappMessage += `*Pacote de jogos: ${gamePackage} jogos*\n`;
