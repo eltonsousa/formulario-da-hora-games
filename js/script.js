@@ -753,8 +753,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           // Chama a nova função para obter o valor final
           const valorFinal = calculateFinalPrice();
 
+          // banco de dados Supabase
           const configToSave = {
-            service_id: serviceId, // Adicionado
+            service_id: serviceId,
             nome,
             telefone,
             email,
@@ -763,6 +764,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             desbloqueadoOunao,
             anoXbox: parseInt(anoXbox),
             tipoHd,
+            tipo_servico: tipoServico,
             jogosSelecionados,
           };
 
