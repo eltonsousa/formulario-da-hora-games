@@ -441,6 +441,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     confirmationModal.classList.add(CSS_CLASSES.HIDDEN); // Esconde o modal
     onConfirmAction = null; // Limpa o callback
+    setFormLoadingState(false); // Garante que o botão de envio esteja habilitado
   });
 
   cancelActionBtn.addEventListener("click", () => {
@@ -604,6 +605,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           const modeloXbox = document.getElementById("modeloXbox").value;
           const anoXbox = document.getElementById("anoXbox").value;
 
+          // CAPTURA AQUI O VALOR DO RADIO BUTTON SELECIONADO
+          const desbloqueadoOunao =
+            document.querySelector('input[name="desbloqueadoOunao"]:checked')
+              ?.value || "Não informado";
+
           let tipoHd = "";
           if (hdInternoRadio.checked) {
             tipoHd = hdInternoRadio.value;
@@ -626,6 +632,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             email,
             endereco,
             modeloXbox,
+            desbloqueadoOunao,
             anoXbox: parseInt(anoXbox),
             tipoHd,
             jogosSelecionados,
@@ -654,6 +661,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
           whatsappMessage += `*Detalhes do Xbox:*\n`;
           whatsappMessage += `Modelo: ${modeloXbox.toUpperCase()}\n`;
+          whatsappMessage += `Estado Console: ${desbloqueadoOunao}\n`;
           whatsappMessage += `Ano: ${anoXbox}\n`;
           whatsappMessage += `Armazenamento: ${tipoHd}\n\n`;
 
