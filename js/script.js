@@ -586,8 +586,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   const jogosSelecionados = [];
   gameCheckboxes.forEach((c) => { if (c.checked) jogosSelecionados.push(c.value); });
 
-  let resumo = `📋 <b>Resumo da Configuração</b>\n`;
-  resumo += `Deseja <b>confirmar e enviar os dados</b> ou <b>corrigir</b>?\n\n`;
+  let resumo = `📋 <b>Resumo do seu Pedido</b>\n`;
+  resumo += `<b>Confirmar e enviar os dados</b> ou <b>Corrigir</b>?\n\n`;
   resumo += `<b>Nome:</b> ${nome}\n`;
   resumo += `<b>Telefone:</b> ${telefone}\n`;
   resumo += `<b>Email:</b> ${email}\n`;
