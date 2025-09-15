@@ -411,7 +411,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     confirmationModal.classList.add(CSS_CLASSES.HIDDEN);
     onConfirmAction = null;
-    setFormLoadingState(false);
   });
 
   cancelActionBtn.addEventListener("click", () => {
@@ -564,16 +563,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     messageBox.classList.add(CSS_CLASSES.HIDDEN);
 
-    showInlineError(errorNome, document.getElementById("nome"), "");
-    showInlineError(errorTelefone, telefoneInput, "");
-    showInlineError(errorEmail, emailInput, "");
-    showInlineError(errorEndereco, document.getElementById("endereco"), "");
-    showInlineError(errorModeloXbox, document.getElementById("modeloXbox"), "");
-    showInlineError(errorAnoXbox, document.getElementById("anoXbox"), "");
-    showInlineError(errorTipoHd, null, "");
-
+    // Validação de todos os campos antes de continuar
     if (!validateForm()) {
-      setFormLoadingState(false);
       return;
     }
 
@@ -643,7 +634,6 @@ document.addEventListener("DOMContentLoaded", async function () {
               MESSAGES.DB_SAVE_ERROR(error.message || "Verifique sua conexão e tente novamente."),
               "error"
             );
-            setFormLoadingState(false);
             return;
           }
 
@@ -684,7 +674,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             whatsappMessage += `\n*Aviso:* ${MESSAGES.XBOX_2015_WARNING}\n`;
           }
 
-          whatsappMessage += `\n*VALOR DO SERVIÇO: R$ ${valorFinal.toFixed(2).replace(".", ",")}*\n`;
+          whatsappMessage += `\n*VALOR DO SERVIÇO: R$ ${valorFinal.toFixed(2).replace(".", ",")}* \n`;
 
           whatsappMessage += `\n_Gerado via App Da Hora Games_`;
 
@@ -695,11 +685,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           handleHdSelection();
           handleConsoleTypeSelection();
           resetFormDirtyState();
-
-          setFormLoadingState(false);
+          showGlobalMessage("Orçamento enviado com sucesso!", "success");
         } catch (e) {
           console.error("Erro inesperado ao processar formulário: ", e);
           showGlobalMessage(MESSAGES.GENERIC_ERROR(e.message), "error");
+        } finally {
           setFormLoadingState(false);
         }
       }
