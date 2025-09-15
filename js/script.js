@@ -400,7 +400,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function showConfirmationModal(message, callback) {
-    confirmationMessage.textContent = message;
+    confirmationMessage.innerHTML = message;
     onConfirmAction = callback;
     confirmationModal.classList.remove(CSS_CLASSES.HIDDEN);
   }
@@ -559,140 +559,143 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    messageBox.classList.add(CSS_CLASSES.HIDDEN);
+  messageBox.classList.add(CSS_CLASSES.HIDDEN);
 
-    // Validação de todos os campos antes de continuar
-    if (!validateForm()) {
-      return;
-    }
+  // Validação de todos os campos antes de continuar
+  if (!validateForm()) {
+    return;
+  }
 
-    showConfirmationModal(
-      "Deseja realmente enviar esta configuração para o WhatsApp?",
-      async () => {
-        setFormLoadingState(true);
+  // --- NOVO: Monta o resumo para o modal ---
+  const nome = document.getElementById("nome").value.trim();
+  const telefone = telefoneInput.value.trim();
+  const email = document.getElementById("email").value.trim();
+  const endereco = document.getElementById("endereco").value.trim();
+  const modeloXbox = document.getElementById("modeloXbox").value;
+  const anoXbox = document.getElementById("anoXbox").value;
+  const desbloqueadoOunao = document.querySelector('input[name="desbloqueadoOunao"]:checked')?.value || "Não informado";
+  const gamePackage = document.querySelector('input[name="gamePackage"]:checked')?.value || "N/A";
 
-        try {
-          const serviceId = `OS-${uuid.v4().substring(0, 8).toUpperCase()}`;
-          const nome = document.getElementById("nome").value.trim();
-          const telefone = telefoneInput.value.trim();
-          const email = document.getElementById("email").value.trim();
-          const endereco = document.getElementById("endereco").value.trim();
-          const modeloXbox = document.getElementById("modeloXbox").value;
-          const anoXbox = document.getElementById("anoXbox").value;
+  let tipoHd = "";
+  if (hdInternoRadio.checked) tipoHd = hdInternoRadio.value;
+  else if (hdExternoRadio.checked) tipoHd = hdExternoRadio.value;
+  else if (pendriveRadio.checked) tipoHd = pendriveRadio.value;
 
-          const desbloqueadoOunao =
-            document.querySelector('input[name="desbloqueadoOunao"]:checked')?.value || "Não informado";
-          const gamePackage =
-            document.querySelector('input[name="gamePackage"]:checked')?.value || "N/A";
+  const jogosSelecionados = [];
+  gameCheckboxes.forEach((c) => { if (c.checked) jogosSelecionados.push(c.value); });
 
-          let tipoHd = "";
-          if (hdInternoRadio.checked) {
-            tipoHd = hdInternoRadio.value;
-          } else if (hdExternoRadio.checked) {
-            tipoHd = hdExternoRadio.value;
-          } else if (pendriveRadio.checked) {
-            tipoHd = pendriveRadio.value;
-          }
+  let resumo = `📋 <b>Resumo da Configuração</b>\n`;
+  resumo += `Deseja <b>confirmar e enviar os dados</b> ou <b>corrigir</b>?\n\n`;
+  resumo += `<b>Nome:</b> ${nome}\n`;
+  resumo += `<b>Telefone:</b> ${telefone}\n`;
+  resumo += `<b>Email:</b> ${email}\n`;
+  resumo += `<b>Endereço:</b> ${endereco}\n\n`;
+  resumo += `<b>Modelo:</b> ${modeloXbox}\n`;
+  resumo += `<b>Ano:</b> ${anoXbox}\n`;
+  resumo += `<b>Estado:</b> ${desbloqueadoOunao}\n`;
+  resumo += `<b>Armazenamento:</b> ${tipoHd || "Não informado"}\n`;
 
-          const jogosSelecionados = [];
-          gameCheckboxes.forEach((checkbox) => {
-            if (checkbox.checked) {
-              jogosSelecionados.push(checkbox.value);
-            }
-          });
+  if (desbloqueadoOunao === "Desbloqueado" && gamePackage !== "N/A") {
+    resumo += `<b>Pacote de jogos:</b> ${gamePackage} jogos\n`;
+  }
 
-          let tipoServico = "";
-          if (desbloqueadoOunao === "Desbloqueado" || anoXbox === "2015") {
-            tipoServico = "Somente Jogos";
-          } else if (desbloqueadoOunao === "Bloqueado") {
-            tipoServico = "Desbloqueio + Jogos";
-          }
+  if (jogosSelecionados.length > 0) {
+    resumo += `\n<b>Jogos Selecionados:</b>\n- ${jogosSelecionados.join("\n- ")}`;
+  }
 
-          const valorFinal = calculateFinalPrice();
+  // Mostra o modal com o resumo
+  showConfirmationModal(resumo, async () => {
+    setFormLoadingState(true);
 
-          const configToSave = {
-            service_id: serviceId,
-            nome,
-            telefone,
-            email,
-            endereco,
-            modeloXbox,
-            desbloqueadoOunao,
-            anoXbox: parseInt(anoXbox),
-            tipoHd,
-            jogosSelecionados,
-            tipo_servico: tipoServico,
-          };
+    try {
+      const serviceId = `OS-${uuid.v4().substring(0, 8).toUpperCase()}`;
+      const valorFinal = calculateFinalPrice();
 
-          const { data, error } = await saveXboxConfig(configToSave);
+      const configToSave = {
+        service_id: serviceId,
+        nome,
+        telefone,
+        email,
+        endereco,
+        modeloXbox,
+        desbloqueadoOunao,
+        anoXbox: parseInt(anoXbox),
+        tipoHd,
+        jogosSelecionados,
+        tipo_servico:
+          (desbloqueadoOunao === "Desbloqueado" || anoXbox === "2015")
+            ? "Somente Jogos"
+            : "Desbloqueio + Jogos",
+      };
 
-          if (error) {
-            console.error("Erro ao salvar no Supabase:", error);
-            showGlobalMessage(
-              MESSAGES.DB_SAVE_ERROR(error.message || "Verifique sua conexão e tente novamente."),
-              "error"
-            );
-            return;
-          }
+      const { data, error } = await saveXboxConfig(configToSave);
 
-          let whatsappMessage = `*Orçamento/Desbloqueio Xbox 360*\n`;
-          whatsappMessage += `*ID do Serviço: ${serviceId}*\n\n`;
-          whatsappMessage += `*Informações Pessoais:*\n`;
-          whatsappMessage += `Nome: ${nome}\n`;
-          whatsappMessage += `Telefone: ${telefone}\n`;
-          whatsappMessage += `Email: ${email}\n`;
-          whatsappMessage += `Endereço: ${endereco}\n\n`;
-
-          whatsappMessage += `*Detalhes do Xbox:*\n`;
-          whatsappMessage += `Modelo: ${modeloXbox.toUpperCase()}\n`;
-          whatsappMessage += `Estado Console: ${desbloqueadoOunao}\n`;
-          whatsappMessage += `Ano: ${anoXbox}\n`;
-          whatsappMessage += `Armazenamento: ${tipoHd}\n`;
-
-          if (tipoServico) {
-            whatsappMessage += `Tipo Serviço: ${tipoServico}\n\n`;
-          }
-
-          if (desbloqueadoOunao === "Desbloqueado" && gamePackage !== "N/A") {
-            whatsappMessage += `*Pacote de jogos: ${gamePackage} jogos*\n`;
-          }
-
-          if (jogosSelecionados.length > 0) {
-            whatsappMessage += `*Jogos Escolhidos:*\n`;
-            jogosSelecionados.forEach((jogo) => {
-              whatsappMessage += `- ${jogo}\n`;
-            });
-          } else if (tipoHd) {
-            whatsappMessage += `Nenhum jogo selecionado para cópia.\n`;
-          } else {
-            whatsappMessage += `Não é possível copiar jogos sem HD.\n`;
-          }
-
-          if (anoXbox === "2015") {
-            whatsappMessage += `\n*Aviso:* ${MESSAGES.XBOX_2015_WARNING}\n`;
-          }
-
-          whatsappMessage += `\n*VALOR DO SERVIÇO: R$ ${valorFinal.toFixed(2).replace(".", ",")}* \n`;
-
-          whatsappMessage += `\n_Gerado via App Da Hora Games_`;
-
-          const whatsappUrl = `https://api.whatsapp.com/send?phone=${config.whatsappNumber}&text=${encodeURIComponent(whatsappMessage)}`;
-
-          window.open(whatsappUrl, "_system");
-          form.reset();
-          handleHdSelection();
-          handleConsoleTypeSelection();
-          resetFormDirtyState();
-          showGlobalMessage("Orçamento enviado com sucesso!", "success");
-        } catch (e) {
-          console.error("Erro inesperado ao processar formulário: ", e);
-          showGlobalMessage(MESSAGES.GENERIC_ERROR(e.message), "error");
-        } finally {
-          setFormLoadingState(false);
-        }
+      if (error) {
+        console.error("Erro ao salvar no Supabase:", error);
+        showGlobalMessage(
+          MESSAGES.DB_SAVE_ERROR(error.message || "Verifique sua conexão e tente novamente."),
+          "error"
+        );
+        return;
       }
-    );
+
+      let whatsappMessage = `*Orçamento/Desbloqueio Xbox 360*\n`;
+      whatsappMessage += `*ID do Serviço: ${serviceId}*\n\n`;
+      whatsappMessage += `*Informações Pessoais:*\n`;
+      whatsappMessage += `Nome: ${nome}\n`;
+      whatsappMessage += `Telefone: ${telefone}\n`;
+      whatsappMessage += `Email: ${email}\n`;
+      whatsappMessage += `Endereço: ${endereco}\n\n`;
+
+      whatsappMessage += `*Detalhes do Xbox:*\n`;
+      whatsappMessage += `Modelo: ${modeloXbox.toUpperCase()}\n`;
+      whatsappMessage += `Estado Console: ${desbloqueadoOunao}\n`;
+      whatsappMessage += `Ano: ${anoXbox}\n`;
+      whatsappMessage += `Armazenamento: ${tipoHd}\n`;
+
+      if (configToSave.tipo_servico) {
+        whatsappMessage += `Tipo Serviço: ${configToSave.tipo_servico}\n\n`;
+      }
+
+      if (desbloqueadoOunao === "Desbloqueado" && gamePackage !== "N/A") {
+        whatsappMessage += `*Pacote de jogos: ${gamePackage} jogos*\n`;
+      }
+
+      if (jogosSelecionados.length > 0) {
+        whatsappMessage += `*Jogos Escolhidos:*\n`;
+        jogosSelecionados.forEach((jogo) => {
+          whatsappMessage += `- ${jogo}\n`;
+        });
+      } else if (tipoHd) {
+        whatsappMessage += `Nenhum jogo selecionado para cópia.\n`;
+      } else {
+        whatsappMessage += `Não é possível copiar jogos sem HD.\n`;
+      }
+
+      if (anoXbox === "2015") {
+        whatsappMessage += `\n*Aviso:* ${MESSAGES.XBOX_2015_WARNING}\n`;
+      }
+
+      whatsappMessage += `\n*VALOR DO SERVIÇO: R$ ${valorFinal.toFixed(2).replace(".", ",")}* \n`;
+      whatsappMessage += `\n_Gerado via App Da Hora Games_`;
+
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${config.whatsappNumber}&text=${encodeURIComponent(whatsappMessage)}`;
+
+      window.open(whatsappUrl, "_system");
+      form.reset();
+      handleHdSelection();
+      handleConsoleTypeSelection();
+      resetFormDirtyState();
+      showGlobalMessage("Orçamento enviado com sucesso!", "success");
+    } catch (e) {
+      console.error("Erro inesperado ao processar formulário: ", e);
+      showGlobalMessage(MESSAGES.GENERIC_ERROR(e.message), "error");
+    } finally {
+      setFormLoadingState(false);
+    }
   });
+});
+
 });

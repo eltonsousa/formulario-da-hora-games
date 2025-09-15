@@ -289,3 +289,35 @@ button.onde-encontrar{
 button.onde-encontrar:hover{
     background-color: #fa8975;
 }
+
+
+
+/* CONFIRMATION MODAL FIX START
+   Mantém os botões visíveis e torna o conteúdo do modal rolável
+   para evitar que o resumo cubra os botões em telas pequenas.
+*/
+#confirmationModal > div {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;      /* não ultrapassar 90% da altura da tela */
+    width: 95%;
+    max-width: 640px;      /* largura máxima do modal */
+    box-sizing: border-box;
+}
+
+/* área do texto dentro do modal - permite rolagem interna */
+#confirmationModal #confirmationMessage {
+    flex: 1 1 auto;
+    min-height: 0;         /* necessário para overflow em flex children */
+    overflow-y: auto;
+    white-space: pre-wrap; /* respeita quebras de linha */
+    text-align: left;
+    margin-bottom: 0.5rem;
+}
+
+/* ação (botões) fixa embaixo do modal */
+#confirmationModal .flex.justify-around {
+    flex-shrink: 0;
+    margin-top: 12px;
+}
+/* CONFIRMATION MODAL FIX END */
