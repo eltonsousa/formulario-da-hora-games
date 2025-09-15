@@ -13,13 +13,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   // --- Objeto de Configuração Centralizado ---
   const config = {
     whatsappNumber: "5592993312208", // ALtere para o seu número de WhatsApp!
-    // Removidas latitude e longitude. Usar a URL direta abaixo.
     storeLocationUrl: "https://maps.app.goo.gl/9BWP7ztqomQJdKP57", // SUBSTITUA PELA URL REAL DA SUA LOJA NO GOOGLE MAPS!
-    instagramUrl:
-      "https://www.instagram.com/dahora_games?igsh=NDZqMW5tYTVsOHR1", // SUBSTITUA PELA SUA URL DO INSTAGRAM
+    instagramUrl: "https://www.instagram.com/dahora_games?igsh=NDZqMW5tYTVsOHR1", // SUBSTITUA PELA SUA URL DO INSTAGRAM
+    gameLimitBloqueado: 15,
   };
-
-  const GAME_LIMIT_BLOQUEADO = 15; // Nova constante para o limite de jogos
 
   const PRICES = {
     bloqueado: 150.0,
@@ -34,24 +31,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     INVALID_TELEPHONE: "Por favor, insira um telefone válido (XX) XXXXX-XXXX.",
     INVALID_EMAIL: "Por favor, insira um e-mail válido.",
     SELECT_HD_OPTION: "Por favor, selecione uma opção de HD.",
-    SELECT_GAMES_OR_NO_HD:
-      "Escolha pelo menos um jogo ou desmarque a opção de HD se não quiser copiar jogos.",
-    GAME_LIMIT_EXCEEDED: (max) =>
-      `Você só pode escolher no máximo ${max} jogos.`,
+    SELECT_GAMES_OR_NO_HD: "Escolha pelo menos um jogo ou desmarque a opção de HD se não quiser copiar jogos.",
+    GAME_LIMIT_EXCEEDED: (max) => `Você só pode escolher no máximo ${max} jogos.`,
     GAME_PACKAGE_REQUIRED: "Por favor, selecione um pacote de jogos.",
     GENERIC_ERROR: (msg) => `Erro inesperado: ${msg}`,
     DB_SAVE_ERROR: (msg) => `Erro ao salvar no banco de dados: ${msg}`,
-    SENDING_WHATSAPP: "Enviando dados...", // Alterado para 'Enviando dados...'
-    LOADING_LOCATION: "Abrindo localização...", // Alterado para 'Abrindo localização...'
-    LOADING_INSTAGRAM: "Abrindo Insta...", // Alterado para 'Abrindo Insta...'
-    ORIGINAL_WHATSAPP_TEXT:
-      '<i class="fab fa-whatsapp mr-2"></i> Enviar para WhatsApp',
-    ORIGINAL_LOCATION_TEXT:
-      '<i class="fas fa-map-marker-alt mr-2"></i> Ver Localização da Loja',
-    ORIGINAL_INSTAGRAM_TEXT:
-      '<i class="fab fa-instagram mr-2"></i> Nosso Instagram',
-    UNSAVED_CHANGES_WARNING:
-      "Você tem alterações não salvas. Tem certeza que deseja sair?",
+    SENDING_WHATSAPP: "Enviando dados...",
+    LOADING_LOCATION: "Abrindo localização...",
+    LOADING_INSTAGRAM: "Abrindo Insta...",
+    ORIGINAL_WHATSAPP_TEXT: '<i class="fab fa-whatsapp mr-2"></i> Enviar para WhatsApp',
+    ORIGINAL_LOCATION_TEXT: '<i class="fas fa-map-marker-alt mr-2"></i> Ver Localização da Loja',
+    ORIGINAL_INSTAGRAM_TEXT: '<i class="fab fa-instagram mr-2"></i> Nosso Instagram',
+    UNSAVED_CHANGES_WARNING: "Você tem alterações não salvas. Tem certeza que deseja sair?",
     XBOX_2015_WARNING: "Não será possível fazer desbloqueio definitivo!",
   };
 
@@ -60,10 +51,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     BORDER_RED: "border-red-500",
     BG_GREEN: "bg-green-600",
     BG_GREEN_HOVER: "hover:bg-green-700",
-    BG_BLUE: "bg-blue-600", // Adicionado para consistência
-    BG_BLUE_HOVER: "hover:bg-blue-700", // Adicionado para consistência
-    BG_PINK: "bg-pink-600", // Adicionado para consistência
-    BG_PINK_HOVER: "hover:bg-pink-700", // Adicionado para consistência
+    BG_BLUE: "bg-blue-600",
+    BG_BLUE_HOVER: "hover:bg-blue-700",
+    BG_PINK: "bg-pink-600",
+    BG_PINK_HOVER: "hover:bg-pink-700",
     BG_DISABLED: "bg-gray-600",
     CURSOR_NOT_ALLOWED: "cursor-not-allowed",
     TEXT_RED: "text-red-400",
@@ -100,7 +91,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const bloqueadoRadio = document.getElementById("bloqueado");
   const errorGamePackage = document.getElementById("error-gamePackage");
 
-  // Referências aos elementos do modal de confirmação
   const confirmationModal = document.getElementById("confirmationModal");
   const confirmationMessage = document.getElementById("confirmationMessage");
   const confirmActionBtn = document.getElementById("confirmActionBtn");
@@ -115,33 +105,18 @@ document.addEventListener("DOMContentLoaded", async function () {
   const errorTipoHd = document.getElementById("error-tipoHd");
 
   let isFormDirty = false;
-  let onConfirmAction = null; // Variável para armazenar o callback de confirmação
+  let onConfirmAction = null;
 
-  /**
-   * Exibe uma mensagem global de feedback para o usuário.
-   * @param {string} msg A mensagem a ser exibida.
-   * @param {'success'|'error'|'info'} type O tipo da mensagem (determina a cor e estilo).
-   */
   function showGlobalMessage(msg, type) {
     messageBox.textContent = msg;
     messageBox.className = `mt-4 p-3 rounded-lg text-center ${CSS_CLASSES.FONT_BOLD}`;
 
     if (type === "error") {
-      messageBox.classList.add(
-        CSS_CLASSES.BG_RED_200,
-        CSS_CLASSES.TEXT_RED_800
-      );
+      messageBox.classList.add(CSS_CLASSES.BG_RED_200, CSS_CLASSES.TEXT_RED_800);
     } else if (type === "success") {
-      messageBox.classList.add(
-        CSS_CLASSES.BG_GREEN_200,
-        CSS_CLASSES.TEXT_GREEN_800,
-        CSS_CLASSES.TEXT_LG
-      );
+      messageBox.classList.add(CSS_CLASSES.BG_GREEN_200, CSS_CLASSES.TEXT_GREEN_800, CSS_CLASSES.TEXT_LG);
     } else if (type === "info") {
-      messageBox.classList.add(
-        CSS_CLASSES.BG_BLUE_200,
-        CSS_CLASSES.TEXT_BLUE_800
-      );
+      messageBox.classList.add(CSS_CLASSES.BG_BLUE_200, CSS_CLASSES.TEXT_BLUE_800);
     }
     messageBox.classList.remove(CSS_CLASSES.HIDDEN);
 
@@ -150,13 +125,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }, 5000);
   }
 
-  /**
-   * Exibe ou oculta uma mensagem de erro inline para um campo específico.
-   * Adiciona ou remove a classe de borda vermelha do input.
-   * @param {HTMLElement} errorElement O elemento <div> que exibirá a mensagem de erro.
-   * @param {HTMLElement | null} inputElement O elemento <input> ou <select> associado ao erro (pode ser null para radios).
-   * @param {string} message A mensagem de erro a ser exibida.
-   */
   function showInlineError(errorElement, inputElement, message) {
     if (message) {
       errorElement.textContent = message;
@@ -173,14 +141,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  /**
-   * Formata o número de telefone no padrão (XX) XXXXX-XXXX.
-   * @param {string} value O valor bruto do input de telefone.
-   * @returns {string} O número de telefone formatado.
-   */
   function formatTelefone(value) {
     if (!value) return "";
-    let cleanedValue = value.replace(/\D/g, ""); // Remove tudo que não for dígito
+    let cleanedValue = value.replace(/\D/g, "");
     let formattedValue = "";
 
     if (cleanedValue.length > 0) {
@@ -195,16 +158,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     return formattedValue;
   }
 
-  /**
-   * Define o estado de carregamento para um botão específico.
-   * @param {HTMLElement} button O elemento do botão.
-   * @param {boolean} isLoading Se o botão está no estado de carregamento.
-   * @param {string} loadingText O texto a ser exibido durante o carregamento.
-   * @param {string} originalText O texto original do botão (com ícone HTML, se houver).
-   * @param {string} normalBgClass A classe Tailwind CSS para a cor de fundo normal.
-   * @param {string} hoverBgClass A classe Tailwind CSS para a cor de fundo ao passar o mouse.
-   * @param {string} disabledBgClass A classe Tailwind CSS para a cor de fundo quando desabilitado.
-   */
   function setButtonLoadingState(
     button,
     isLoading,
@@ -216,20 +169,16 @@ document.addEventListener("DOMContentLoaded", async function () {
   ) {
     button.disabled = isLoading;
     if (isLoading) {
-      button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${loadingText}`; // Adiciona spinner e texto de carregamento
+      button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${loadingText}`;
       button.classList.remove(normalBgClass, hoverBgClass);
       button.classList.add(disabledBgClass, CSS_CLASSES.CURSOR_NOT_ALLOWED);
     } else {
-      button.innerHTML = originalText; // Retorna ao texto e ícone original
+      button.innerHTML = originalText;
       button.classList.add(normalBgClass, hoverBgClass);
       button.classList.remove(disabledBgClass, CSS_CLASSES.CURSOR_NOT_ALLOWED);
     }
   }
 
-  /**
-   * Define o estado de carregamento para o botão de envio do formulário.
-   * @param {boolean} isLoading Se o botão está no estado de carregamento.
-   */
   function setFormLoadingState(isLoading) {
     setButtonLoadingState(
       enviarWhatsappBtn,
@@ -242,9 +191,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     );
   }
 
-  /**
-   * Atualiza a contagem de jogos selecionados no display.
-   */
   function updateGameCountDisplay(maxGames) {
     const selectedGamesCount = document.querySelectorAll(
       'input[name="jogos"]:checked'
@@ -253,9 +199,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     maxGameLimit.textContent = maxGames;
   }
 
-  /**
-   * Adiciona listeners para detectar alterações no formulário e marcar como "sujo".
-   */
   function addFormDirtyListeners() {
     const inputs = form.querySelectorAll("input, select, textarea");
     inputs.forEach((input) => {
@@ -268,14 +211,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
-  /**
-   * Reseta o estado "sujo" do formulário.
-   */
   function resetFormDirtyState() {
     isFormDirty = false;
   }
 
-  // --- Funções de Validação ---
   function validateNome() {
     const input = document.getElementById("nome");
     if (!input.value.trim()) {
@@ -355,13 +294,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function validateGamePackage() {
-    const desbloqueadoOunao = document.querySelector(
-      'input[name="desbloqueadoOunao"]:checked'
-    )?.value;
+    const desbloqueadoOunao = document.querySelector('input[name="desbloqueadoOunao"]:checked')?.value;
     if (desbloqueadoOunao === "Desbloqueado") {
-      const selectedPackage = document.querySelector(
-        'input[name="gamePackage"]:checked'
-      );
+      const selectedPackage = document.querySelector('input[name="gamePackage"]:checked');
       if (!selectedPackage) {
         showInlineError(errorGamePackage, null, MESSAGES.GAME_PACKAGE_REQUIRED);
         return false;
@@ -369,21 +304,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       showInlineError(errorGamePackage, null, "");
       return true;
     }
-    return true; // Não precisa de pacote se for bloqueado
+    return true;
   }
 
   function validateGameSelection() {
-    const desbloqueadoOunao = document.querySelector(
-      'input[name="desbloqueadoOunao"]:checked'
-    )?.value;
-    const selectedGamesCount = document.querySelectorAll(
-      'input[name="jogos"]:checked'
-    ).length;
+    const desbloqueadoOunao = document.querySelector('input[name="desbloqueadoOunao"]:checked')?.value;
+    const selectedGamesCount = document.querySelectorAll('input[name="jogos"]:checked').length;
 
     if (desbloqueadoOunao === "Desbloqueado") {
-      const selectedPackage = document.querySelector(
-        'input[name="gamePackage"]:checked'
-      )?.value;
+      const selectedPackage = document.querySelector('input[name="gamePackage"]:checked')?.value;
       const maxGames = selectedPackage ? parseInt(selectedPackage) : 0;
       if (selectedGamesCount > maxGames) {
         gameLimitWarning.textContent = MESSAGES.GAME_LIMIT_EXCEEDED(maxGames);
@@ -391,9 +320,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         return false;
       }
     } else if (desbloqueadoOunao === "Bloqueado") {
-      if (selectedGamesCount > GAME_LIMIT_BLOQUEADO) {
-        gameLimitWarning.textContent =
-          MESSAGES.GAME_LIMIT_EXCEEDED(GAME_LIMIT_BLOQUEADO);
+      if (selectedGamesCount > config.gameLimitBloqueado) {
+        gameLimitWarning.textContent = MESSAGES.GAME_LIMIT_EXCEEDED(config.gameLimitBloqueado);
         gameLimitWarning.classList.remove(CSS_CLASSES.HIDDEN);
         return false;
       }
@@ -403,14 +331,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     return true;
   }
 
-  /**
-   * Valida todos os campos do formulário.
-   * @returns {boolean} True se o formulário for válido, false caso contrário.
-   */
   function validateForm() {
     let isValid = true;
 
-    // Executa todas as validações e mantém o isValid em false se alguma falhar
     isValid = validateNome() && isValid;
     isValid = validateTelefone() && isValid;
     isValid = validateEmail() && isValid;
@@ -421,11 +344,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     isValid = validateGamePackage() && isValid;
     isValid = validateGameSelection() && isValid;
 
-    const anyHdSelected =
-      hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
-    const jogosSelecionadosCount = document.querySelectorAll(
-      'input[name="jogos"]:checked'
-    ).length;
+    const anyHdSelected = hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
+    const jogosSelecionadosCount = document.querySelectorAll('input[name="jogos"]:checked').length;
 
     if (anyHdSelected && jogosSelecionadosCount === 0) {
       showGlobalMessage(MESSAGES.SELECT_GAMES_OR_NO_HD, "error");
@@ -444,37 +364,23 @@ document.addEventListener("DOMContentLoaded", async function () {
     return isValid;
   }
 
-  /**
-   * Calcula o valor final do serviço com base nas seleções.
-   * @returns {number} O valor final do serviço.
-   */
   function calculateFinalPrice() {
-    const desbloqueadoOunao = document.querySelector(
-      'input[name="desbloqueadoOunao"]:checked'
-    )?.value;
-    const gamePackage = document.querySelector(
-      'input[name="gamePackage"]:checked'
-    )?.value;
+    const desbloqueadoOunao = document.querySelector('input[name="desbloqueadoOunao"]:checked')?.value;
+    const gamePackage = document.querySelector('input[name="gamePackage"]:checked')?.value;
 
     let valorFinal = 0;
     if (desbloqueadoOunao === "Bloqueado") {
       valorFinal = PRICES.bloqueado;
     } else if (desbloqueadoOunao === "Desbloqueado") {
-      if (gamePackage === "10") {
-        valorFinal = PRICES.desbloqueado["10"];
-      } else if (gamePackage === "20") {
-        valorFinal = PRICES.desbloqueado["20"];
+      if (gamePackage in PRICES.desbloqueado) {
+        valorFinal = PRICES.desbloqueado[gamePackage];
       }
     }
     return valorFinal;
   }
 
-  /**
-   * Lida com a seleção de HD, habilitando/desabilitando a seleção de jogos.
-   */
   function handleHdSelection() {
-    const anyHdSelected =
-      hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
+    const anyHdSelected = hdInternoRadio.checked || hdExternoRadio.checked || pendriveRadio.checked;
 
     if (!anyHdSelected) {
       hdWarning.classList.remove(CSS_CLASSES.HIDDEN);
@@ -493,59 +399,44 @@ document.addEventListener("DOMContentLoaded", async function () {
     validateTipoHd();
   }
 
-  /**
-   * Exibe um modal de confirmação com uma mensagem e um callback para quando confirmado.
-   * @param {string} message A mensagem a ser exibida no modal.
-   * @param {Function} callback A função a ser executada se o usuário confirmar.
-   */
   function showConfirmationModal(message, callback) {
     confirmationMessage.textContent = message;
-    onConfirmAction = callback; // Armazena o callback
+    onConfirmAction = callback;
     confirmationModal.classList.remove(CSS_CLASSES.HIDDEN);
   }
 
-  // Event listeners para os botões do modal de confirmação
   confirmActionBtn.addEventListener("click", () => {
     if (onConfirmAction) {
-      onConfirmAction(); // Executa o callback armazenado
+      onConfirmAction();
     }
-    confirmationModal.classList.add(CSS_CLASSES.HIDDEN); // Esconde o modal
-    onConfirmAction = null; // Limpa o callback
-    setFormLoadingState(false); // Garante que o botão de envio esteja habilitado
+    confirmationModal.classList.add(CSS_CLASSES.HIDDEN);
+    onConfirmAction = null;
+    setFormLoadingState(false);
   });
 
   cancelActionBtn.addEventListener("click", () => {
-    confirmationModal.classList.add(CSS_CLASSES.HIDDEN); // Esconde o modal
-    onConfirmAction = null; // Limpa o callback
-    setFormLoadingState(false); // Garante que o botão de envio esteja habilitado
+    confirmationModal.classList.add(CSS_CLASSES.HIDDEN);
+    onConfirmAction = null;
+    setFormLoadingState(false);
   });
 
-  // --- Funções para controlar a visibilidade das opções de jogo ---
   function handleConsoleTypeSelection() {
     const isDesbloqueado = desbloqueadoRadio.checked;
     gamePackagesSection.classList.toggle(CSS_CLASSES.HIDDEN, !isDesbloqueado);
 
-    // Reseta as seleções de jogos se o tipo de console mudar
     gameCheckboxes.forEach((checkbox) => (checkbox.checked = false));
-    document
-      .querySelectorAll('input[name="gamePackage"]')
-      .forEach((radio) => (radio.checked = false));
+    document.querySelectorAll('input[name="gamePackage"]').forEach((radio) => (radio.checked = false));
 
     if (isDesbloqueado) {
-      // Oculta a seção de jogos até um pacote ser selecionado
       gameSelectionDetails.classList.add(CSS_CLASSES.HIDDEN);
-      maxGameLimit.textContent = "?"; // Exibe "?" até o pacote ser selecionado
+      maxGameLimit.textContent = "?";
       gameCountDisplay.textContent = 0;
     } else {
-      // Se for 'Bloqueado'
       gameSelectionDetails.classList.remove(CSS_CLASSES.HIDDEN);
-      updateGameCountDisplay(GAME_LIMIT_BLOQUEADO);
+      updateGameCountDisplay(config.gameLimitBloqueado);
     }
   }
 
-  // --- Event Listeners ---
-
-  // Botão "Ver Localização da Loja"
   viewStoreLocationBtn.addEventListener("click", () => {
     setButtonLoadingState(
       viewStoreLocationBtn,
@@ -563,21 +454,19 @@ document.addEventListener("DOMContentLoaded", async function () {
       setButtonLoadingState(
         viewStoreLocationBtn,
         false,
-        MESSAGES.LOADING_LOCATION, // Não usado quando isLoading é false, mas mantido por consistência
+        MESSAGES.LOADING_LOCATION,
         MESSAGES.ORIGINAL_LOCATION_TEXT,
         CSS_CLASSES.BG_BLUE,
         CSS_CLASSES.BG_BLUE_HOVER,
         CSS_CLASSES.BG_DISABLED
       );
-    }, 2000); // Atraso de 2 segundos
+    }, 2000);
   });
 
-  // Botão "Onde Encontrar?" (para o Ano do Xbox)
   ondeEncontrarBtn.addEventListener("click", () => {
     yearHelpMessage.classList.toggle(CSS_CLASSES.HIDDEN);
   });
 
-  // Fechar a mensagem de ajuda se clicar fora dela
   document.addEventListener("click", (event) => {
     if (
       !yearHelpMessage.classList.contains(CSS_CLASSES.HIDDEN) &&
@@ -588,7 +477,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // Botão "Nosso Instagram"
   instagramBtn.addEventListener("click", () => {
     setButtonLoadingState(
       instagramBtn,
@@ -606,44 +494,33 @@ document.addEventListener("DOMContentLoaded", async function () {
       setButtonLoadingState(
         instagramBtn,
         false,
-        MESSAGES.LOADING_INSTAGRAM, // Não usado quando isLoading é false
+        MESSAGES.LOADING_INSTAGRAM,
         MESSAGES.ORIGINAL_INSTAGRAM_TEXT,
         CSS_CLASSES.BG_PINK,
         CSS_CLASSES.BG_PINK_HOVER,
         CSS_CLASSES.BG_DISABLED
       );
-    }, 2000); // Atraso de 2 segundos
+    }, 2000);
   });
 
-  // Eventos para radio buttons de tipo de console
   desbloqueadoRadio.addEventListener("change", handleConsoleTypeSelection);
   bloqueadoRadio.addEventListener("change", handleConsoleTypeSelection);
 
-  // Inicializa a lógica de seleção de HD e contagem de jogos
   handleHdSelection();
   handleConsoleTypeSelection();
 
-  // Formatação do telefone ao digitar
   telefoneInput.addEventListener("input", function (event) {
     event.target.value = formatTelefone(event.target.value);
   });
 
-  // Validações ao sair do campo (blur) ou ao mudar (change)
   document.getElementById("nome").addEventListener("blur", validateNome);
   telefoneInput.addEventListener("blur", validateTelefone);
   emailInput.addEventListener("blur", validateEmail);
-  document
-    .getElementById("endereco")
-    .addEventListener("blur", () => validateEndereco());
-  document
-    .getElementById("modeloXbox")
-    .addEventListener("change", validateModeloXbox);
-  document
-    .getElementById("anoXbox")
-    .addEventListener("change", validateAnoXbox);
+  document.getElementById("endereco").addEventListener("blur", () => validateEndereco());
+  document.getElementById("modeloXbox").addEventListener("change", validateModeloXbox);
+  document.getElementById("anoXbox").addEventListener("change", validateAnoXbox);
   document.getElementById("anoXbox").addEventListener("blur", validateAnoXbox);
 
-  // Evento para os pacotes de jogos
   document.querySelectorAll('input[name="gamePackage"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       gameSelectionDetails.classList.remove(CSS_CLASSES.HIDDEN);
@@ -653,35 +530,27 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   });
 
-  // Eventos para radio buttons de HD
   hdInternoRadio.addEventListener("change", handleHdSelection);
   hdExternoRadio.addEventListener("change", handleHdSelection);
   pendriveRadio.addEventListener("change", handleHdSelection);
 
-  // Eventos para checkboxes de jogos
   gameCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
       validateGameSelection();
-      const desbloqueadoOunao = document.querySelector(
-        'input[name="desbloqueadoOunao"]:checked'
-      )?.value;
+      const desbloqueadoOunao = document.querySelector('input[name="desbloqueadoOunao"]:checked')?.value;
       if (desbloqueadoOunao === "Desbloqueado") {
-        const selectedPackage = document.querySelector(
-          'input[name="gamePackage"]:checked'
-        )?.value;
+        const selectedPackage = document.querySelector('input[name="gamePackage"]:checked')?.value;
         if (selectedPackage) {
           updateGameCountDisplay(selectedPackage);
         }
       } else {
-        updateGameCountDisplay(GAME_LIMIT_BLOQUEADO);
+        updateGameCountDisplay(config.gameLimitBloqueado);
       }
     });
   });
 
-  // Adiciona listeners para detectar alterações e marcar o formulário como "sujo"
   addFormDirtyListeners();
 
-  // Aviso de alterações não salvas ao tentar sair da página
   window.addEventListener("beforeunload", (event) => {
     if (isFormDirty) {
       event.preventDefault();
@@ -690,13 +559,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // Submissão do formulário
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     messageBox.classList.add(CSS_CLASSES.HIDDEN);
 
-    // Limpa erros inline antes de revalidar
     showInlineError(errorNome, document.getElementById("nome"), "");
     showInlineError(errorTelefone, telefoneInput, "");
     showInlineError(errorEmail, emailInput, "");
@@ -710,11 +577,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       return;
     }
 
-    // Exibe o modal de confirmação antes de continuar com o envio real
     showConfirmationModal(
       "Deseja realmente enviar esta configuração para o WhatsApp?",
       async () => {
-        setFormLoadingState(true); // Ativa o estado de carregamento somente após a confirmação
+        setFormLoadingState(true);
 
         try {
           const serviceId = `OS-${uuid.v4().substring(0, 8).toUpperCase()}`;
@@ -726,11 +592,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           const anoXbox = document.getElementById("anoXbox").value;
 
           const desbloqueadoOunao =
-            document.querySelector('input[name="desbloqueadoOunao"]:checked')
-              ?.value || "Não informado";
+            document.querySelector('input[name="desbloqueadoOunao"]:checked')?.value || "Não informado";
           const gamePackage =
-            document.querySelector('input[name="gamePackage"]:checked')
-              ?.value || "N/A";
+            document.querySelector('input[name="gamePackage"]:checked')?.value || "N/A";
 
           let tipoHd = "";
           if (hdInternoRadio.checked) {
@@ -748,7 +612,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
           });
 
-          // Define o tipo de serviço antes de criar o objeto
           let tipoServico = "";
           if (desbloqueadoOunao === "Desbloqueado" || anoXbox === "2015") {
             tipoServico = "Somente Jogos";
@@ -769,7 +632,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             anoXbox: parseInt(anoXbox),
             tipoHd,
             jogosSelecionados,
-            tipo_servico: tipoServico, // LINHA AGORA ESTÁ CORRETA
+            tipo_servico: tipoServico,
           };
 
           const { data, error } = await saveXboxConfig(configToSave);
@@ -777,9 +640,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           if (error) {
             console.error("Erro ao salvar no Supabase:", error);
             showGlobalMessage(
-              MESSAGES.DB_SAVE_ERROR(
-                error.message || "Verifique sua conexão e tente novamente."
-              ),
+              MESSAGES.DB_SAVE_ERROR(error.message || "Verifique sua conexão e tente novamente."),
               "error"
             );
             setFormLoadingState(false);
@@ -823,15 +684,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             whatsappMessage += `\n*Aviso:* ${MESSAGES.XBOX_2015_WARNING}\n`;
           }
 
-          whatsappMessage += `\n*VALOR DO SERVIÇO: R$ ${valorFinal
-            .toFixed(2)
-            .replace(".", ",")}*\n`;
+          whatsappMessage += `\n*VALOR DO SERVIÇO: R$ ${valorFinal.toFixed(2).replace(".", ",")}*\n`;
 
           whatsappMessage += `\n_Gerado via App Da Hora Games_`;
 
-          const whatsappUrl = `https://api.whatsapp.com/send?phone=${
-            config.whatsappNumber
-          }&text=${encodeURIComponent(whatsappMessage)}`;
+          const whatsappUrl = `https://api.whatsapp.com/send?phone=${config.whatsappNumber}&text=${encodeURIComponent(whatsappMessage)}`;
 
           window.open(whatsappUrl, "_system");
           form.reset();
@@ -839,11 +696,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           handleConsoleTypeSelection();
           resetFormDirtyState();
 
-          setFormLoadingState(false); // Desativa o estado de carregamento
+          setFormLoadingState(false);
         } catch (e) {
           console.error("Erro inesperado ao processar formulário: ", e);
           showGlobalMessage(MESSAGES.GENERIC_ERROR(e.message), "error");
-          setFormLoadingState(false); // Desativa o estado de carregamento
+          setFormLoadingState(false);
         }
       }
     );
