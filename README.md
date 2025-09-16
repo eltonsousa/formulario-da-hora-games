@@ -1,6 +1,14 @@
-# **Formulário de Configuração Xbox 360 com Supabase e WhatsApp**
+# **Formulário de Configuração Xbox 360 com Supabase e WhatsApp v1.0.0-beta1-dev**
 
-Este projeto consiste em um formulário web simples para coletar informações de configuração de Xbox 360\. Os dados preenchidos pelos usuários são armazenados em um banco de dados Supabase e, em seguida, uma mensagem formatada é enviada via WhatsApp para um número pré-definido.
+## Este projeto consiste em um formulário web simples para coletar informações de configuração de Xbox 360\. Os dados preenchidos pelos usuários são armazenados em um banco de dados Supabase e, em seguida, uma mensagem formatada é enviada via WhatsApp para um número pré-definido.
+
+## **Melhorias:**
+
+- Adicionado opção para escolher se o console é desbloqueado ou não.
+- Adicionado opção para escolher o pacote de jogos (pacote c/ 10 | pacote c/20).
+- Adicionado resumo ao modal, quando finaliza o cadastro.
+
+---
 
 ## **Objetivo**
 
@@ -9,6 +17,8 @@ O principal objetivo deste projeto é fornecer uma solução funcional para:
 - Coletar dados de clientes (informações pessoais, detalhes do Xbox e seleção de jogos).
 - Armazenar esses dados de forma persistente e estruturada no Supabase.
 - Automatizar o envio de um resumo das configurações para um número de WhatsApp.
+
+---
 
 ## **Estrutura do Projeto**
 
@@ -25,6 +35,8 @@ A estrutura de pastas e arquivos do projeto é a seguinte:
 │ └── img/  
 │ └── logo.png (Opcional, se você tiver uma logo)  
 └── config.xml (para projetos Cordova/Capacitor)
+
+---
 
 ## **Configuração do Supabase**
 
@@ -72,6 +84,8 @@ O RLS é ativado por padrão para segurança. Para permitir a inserção de dado
    - Isso permitirá que qualquer usuário (mesmo sem login explícito, usando a chave anon do SDK) insira dados.
 4. Clique em **"Review"** e depois em **"Save policy"**.
 
+---
+
 ## **Detalhes dos Arquivos**
 
 ### **index.html**
@@ -111,11 +125,14 @@ A lógica principal do formulário, validações e integração.
 - Formata o número de telefone automaticamente.
 - Aplica lógica para exibir avisos de HD e habilitar/desabilitar a seleção de jogos.
 - Ao submeter o formulário:
+
   - Coleta e valida os dados.
   - Chama saveXboxConfig para armazenar no Supabase.
   - Monta uma mensagem detalhada com os dados do formulário.
   - Abre o WhatsApp com a mensagem pré-preenchida.
   - Limpa o formulário após o envio.
+
+---
 
 ## **Como Usar**
 
@@ -125,9 +142,12 @@ A lógica principal do formulário, validações e integração.
 4. **Número do WhatsApp**: No arquivo www/js/script.js, verifique e ajuste a constante WHATSAPP_NUMBER para o seu número de WhatsApp.
 5. **Teste Local**: Abra o arquivo www/index.html em seu navegador para testar a funcionalidade.
 6. **Para Ambientes Mobile (Cordova/Capacitor)**:
+
    - Certifique-se de ter cordova-plugin-inappbrowser (para links externos) e cordova-plugin-whitelist (para permissões de rede) instalados.
    - Execute cordova platform add android (ou ios).
    - Execute cordova build android (ou ios) e depois cordova run android (ou ios).
+
+---
 
 ## **Melhorias Sugeridas**
 
